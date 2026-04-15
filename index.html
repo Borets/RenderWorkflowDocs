@@ -376,30 +376,36 @@
 
   <h2 id="problem">The problem Workflows solves</h2>
 
-  <p>When your app needs to run work that's <strong>long-running</strong>, <strong>multi-step</strong>, or <strong>compute-intensive</strong> — an AI agent making tool calls, a pipeline processing thousands of documents, an ETL job enriching records from an API — you typically end up building a lot of infrastructure around the actual logic:</p>
+  <p>When your app needs to run work that's <strong>long-running</strong>, <strong>multi-step</strong>, or <strong>compute-intensive</strong>, you typically end up building a lot of infrastructure around the actual logic. Workflows handles that infrastructure so you can focus on your code.</p>
 
-  <div class="ba-grid">
-    <div class="ba-card before">
-      <div class="ba-tag">Without Workflows</div>
-      <ul>
-        <li>Provision and manage a message queue (Redis, SQS, RabbitMQ)</li>
-        <li>Write queue consumers, polling loops, and dead-letter handling</li>
-        <li>Implement your own retry logic with backoff</li>
-        <li>Build a worker pool and manage concurrency limits</li>
-        <li>Stitch together monitoring across multiple services</li>
-        <li>Pay for always-on worker instances, even when idle</li>
-      </ul>
+  <div class="scenarios">
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--green-soft);">&#x1F504;</div>
+      <div>
+        <h4>Durability across failures</h4>
+        <p>A transient API timeout or a crashed process shouldn't lose your progress. Workflows provides <strong>durable execution</strong> — each task runs in its own isolated instance, and if it fails, only that task is affected. Parent tasks and completed siblings continue uninterrupted. Your pipeline doesn't restart from scratch because one step hit a blip.</p>
+      </div>
     </div>
-    <div class="ba-card after">
-      <div class="ba-tag">With Workflows</div>
-      <ul>
-        <li>Mark functions as tasks with the Render SDK</li>
-        <li>Render queues, provisions, and deprovisions instances</li>
-        <li>Built-in retries with configurable exponential backoff</li>
-        <li>Chain tasks with <code>Promise.all</code> / <code>asyncio.gather</code></li>
-        <li>Track every run in the Dashboard — status, duration, chain</li>
-        <li>Per-second billing — no compute cost when nothing's running</li>
-      </ul>
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--orange-soft);">&#x1F527;</div>
+      <div>
+        <h4>Automatic retries with backoff</h4>
+        <p>When a task throws an error, Workflows automatically retries it with <strong>configurable exponential backoff</strong> — no retry logic to write, no dead-letter queues to manage. Set <code>maxRetries</code>, <code>waitDurationMs</code>, and <code>backoffScaling</code> per task. A flaky third-party API call retries that step, not the whole job.</p>
+      </div>
+    </div>
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--accent-soft);">&#x2699;&#xFE0F;</div>
+      <div>
+        <h4>No infrastructure to manage</h4>
+        <p>No message brokers, no worker pools, no queue consumers. Render provisions a <strong>dedicated instance per run</strong>, executes your task, and deprovisions when it's done. You don't manage Redis, RabbitMQ, or SQS — just write functions and deploy.</p>
+      </div>
+    </div>
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--blue-soft);">&#x1F4B0;</div>
+      <div>
+        <h4>Per-second billing, zero idle cost</h4>
+        <p>You pay only for the seconds your tasks actually run. No always-on worker instances sitting idle between jobs. Each task gets its own compute tier — a lightweight orchestrator on <code>starter</code>, a heavy transform on <code>pro</code> — so you never overpay for resources you don't need.</p>
+      </div>
     </div>
   </div>
 
