@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Render Workflows — Improved Docs Prototype v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Fraunces:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-raised: #131316;
+    --bg-code: #18181d;
+    --bg-surface: #1c1c22;
+    --border: #26262e;
+    --border-accent: #3a3a46;
+    --text: #dfdfe5;
+    --text-muted: #8b8b9e;
+    --text-dim: #56566a;
+    --accent: #7c6aff;
+    --accent-soft: rgba(124, 106, 255, 0.12);
+    --green: #34d399;
+    --green-soft: rgba(52, 211, 153, 0.1);
+    --orange: #f59e0b;
+    --orange-soft: rgba(245, 158, 11, 0.1);
+    --red: #ef4444;
+    --red-soft: rgba(239, 68, 68, 0.08);
+    --blue: #60a5fa;
+    --blue-soft: rgba(96, 165, 250, 0.1);
+    --cyan: #22d3ee;
+    --pink: #f472b6;
+    --radius: 12px;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+  /* ─── SIDEBAR ───────────────────────── */
+  .sidebar {
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    border-right: 1px solid var(--border); padding: 28px 0;
+    background: var(--bg); z-index: 10;
+  }
+  .sidebar-brand {
+    padding: 0 20px 24px; display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 14px; color: var(--text);
+  }
+  .sidebar-brand .pill {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    background: var(--accent-soft); color: var(--accent);
+    padding: 2px 6px; border-radius: 4px;
+  }
+  .sidebar nav { padding: 0 10px; }
+  .nav-group { margin-bottom: 22px; }
+  .nav-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-dim); padding: 0 10px; margin-bottom: 4px;
+  }
+  .sidebar a {
+    display: block; padding: 5px 10px; font-size: 13px; font-weight: 450;
+    color: var(--text-muted); text-decoration: none; border-radius: 6px;
+    transition: all 0.12s;
+  }
+  .sidebar a:hover { color: var(--text); background: var(--bg-raised); }
+  .sidebar a.on { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+
+  /* ─── MAIN ──────────────────────────── */
+  .main { max-width: 780px; padding: 52px 56px 140px; }
+
+  /* ─── TYPOGRAPHY ────────────────────── */
+  h1 {
+    font-family: var(--font-display); font-weight: 700; font-size: 2.5rem;
+    letter-spacing: -0.035em; line-height: 1.12; color: #fff; margin-bottom: 16px;
+  }
+  .lead { font-size: 1.08rem; color: var(--text-muted); margin-bottom: 36px; max-width: 600px; line-height: 1.65; }
+  h2 {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.55rem;
+    letter-spacing: -0.02em; color: #fff; margin-top: 72px; margin-bottom: 14px;
+    padding-top: 28px; border-top: 1px solid var(--border);
+  }
+  h2:first-of-type { border: none; padding-top: 0; }
+  h3 { font-weight: 700; font-size: 1.05rem; color: #fff; margin-top: 36px; margin-bottom: 8px; }
+  p { margin-bottom: 14px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  strong { color: #fff; font-weight: 600; }
+  code {
+    font-family: var(--font-mono); font-size: 0.84em;
+    background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--cyan);
+  }
+
+  /* ─── CALLOUTS ──────────────────────── */
+  .beta-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-soft); border: 1px solid rgba(124,106,255,0.2);
+    border-radius: 100px; padding: 6px 16px; font-size: 13px; color: var(--accent);
+    font-weight: 600; margin-bottom: 32px;
+  }
+  .callout {
+    border-radius: var(--radius); padding: 16px 20px; margin: 18px 0 22px;
+    font-size: 13.5px; line-height: 1.6; border-left: 3px solid;
+  }
+  .callout.green { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+  .callout.orange { background: var(--orange-soft); border-color: var(--orange); color: var(--orange); }
+  .callout.blue { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); }
+  .callout strong { color: inherit; }
+
+  /* ─── DIAGRAMS / BOXES ──────────────── */
+  .diagram {
+    background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px 32px; margin: 20px 0 24px; overflow-x: auto;
+  }
+  .diagram svg { display: block; margin: 0 auto; }
+  .diagram-cap {
+    text-align: center; font-size: 12px; color: var(--text-dim);
+    margin-top: 12px; font-style: italic;
+  }
+
+  /* ─── CODE ──────────────────────────── */
+  .code-wrap {
+    margin: 18px 0 24px; border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .code-bar {
+    display: flex; background: var(--bg-raised); border-bottom: 1px solid var(--border);
+  }
+  .code-btn {
+    padding: 7px 16px; font-size: 12px; font-family: var(--font-mono); font-weight: 500;
+    color: var(--text-dim); cursor: pointer; border: none; background: none;
+    border-bottom: 2px solid transparent; transition: all 0.12s;
+  }
+  .code-btn:hover { color: var(--text-muted); }
+  .code-btn.on { color: var(--accent); border-bottom-color: var(--accent); }
+  .code-pane {
+    display: none; background: var(--bg-code); padding: 18px 22px; overflow-x: auto;
+  }
+  .code-pane.on { display: block; }
+  .code-pane pre {
+    font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7;
+    color: var(--text); white-space: pre; margin: 0;
+  }
+  .c { color: var(--text-dim); }
+  .k { color: var(--pink); }
+  .s { color: var(--green); }
+  .f { color: var(--blue); }
+  .t { color: var(--cyan); }
+  .n { color: var(--orange); }
+  .d { color: var(--orange); }
+
+  /* ─── BEFORE / AFTER ────────────────── */
+  .ba-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0 28px;
+  }
+  .ba-card {
+    background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; position: relative;
+  }
+  .ba-card.before { border-color: var(--red); border-style: dashed; }
+  .ba-card.after { border-color: var(--green); }
+  .ba-tag {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 12px;
+  }
+  .ba-card.before .ba-tag { background: var(--red-soft); color: var(--red); }
+  .ba-card.after .ba-tag { background: var(--green-soft); color: var(--green); }
+  .ba-card ul {
+    list-style: none; padding: 0; margin: 0;
+  }
+  .ba-card li {
+    font-size: 13px; color: var(--text-muted); padding: 4px 0 4px 18px;
+    position: relative; line-height: 1.45;
+  }
+  .ba-card.before li::before {
+    content: '×'; position: absolute; left: 0; color: var(--red); font-weight: 700; font-size: 14px;
+  }
+  .ba-card.after li::before {
+    content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; font-size: 12px;
+  }
+
+  /* ─── SCENARIO CARDS ────────────────── */
+  .scenarios {
+    display: grid; grid-template-columns: 1fr; gap: 16px; margin: 20px 0 28px;
+  }
+  .scenario {
+    background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 22px 24px; display: grid; grid-template-columns: 48px 1fr; gap: 16px;
+    align-items: start;
+  }
+  .scenario:hover { border-color: var(--border-accent); }
+  .sc-icon {
+    width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-size: 22px;
+  }
+  .scenario h4 { font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .scenario p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+  .scenario code { font-size: 11.5px; }
+
+  /* ─── FEATURE GRID ──────────────────── */
+  .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 24px; }
+  .feat {
+    background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .feat h4 { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .feat p { font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+  /* ─── INSTANCE CARDS ────────────────── */
+  .inst-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0 24px; }
+  .inst {
+    background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; text-align: center;
+  }
+  .inst.hl { border-color: var(--accent); box-shadow: 0 0 24px var(--accent-soft); }
+  .inst .iname { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+  .inst .ispec { font-size: 18px; font-weight: 700; color: #fff; }
+  .inst .iram { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  .inst .iprice { font-size: 12px; color: var(--green); font-weight: 600; }
+
+  /* ─── COMPARISON TABLE ──────────────── */
+  .tbl { width: 100%; border-collapse: collapse; margin: 18px 0 24px; font-size: 13px; }
+  .tbl th {
+    text-align: left; padding: 9px 12px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim);
+    border-bottom: 1px solid var(--border); background: var(--bg-raised);
+  }
+  .tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .tbl tr:last-child td { border-bottom: none; }
+
+  /* ─── OBSERVABILITY MOCK ────────────── */
+  .obs-mock {
+    background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; margin: 20px 0 24px;
+  }
+  .obs-titlebar {
+    background: var(--bg-surface); border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .obs-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .obs-titlebar span {
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  }
+  .obs-body { padding: 20px; }
+  .obs-row {
+    display: grid; grid-template-columns: 140px 80px 1fr 60px; gap: 10px;
+    align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .obs-row:last-child { border-bottom: none; }
+  .obs-task { font-family: var(--font-mono); font-weight: 500; color: var(--text); }
+  .obs-status {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px;
+    display: inline-block; text-align: center;
+  }
+  .obs-status.ok { background: var(--green-soft); color: var(--green); }
+  .obs-status.run { background: var(--blue-soft); color: var(--blue); }
+  .obs-status.fail { background: var(--red-soft); color: var(--red); }
+  .obs-bar-track {
+    height: 6px; background: var(--bg-code); border-radius: 3px; position: relative;
+    overflow: hidden;
+  }
+  .obs-bar-fill { height: 100%; border-radius: 3px; position: absolute; left: 0; top: 0; }
+  .obs-dur { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); text-align: right; }
+
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 28px 20px 80px; }
+    .ba-grid, .feat-grid, .inst-row { grid-template-columns: 1fr; }
+  }
+
+  /* ─── MIGRATION SIDE-BY-SIDE ────────── */
+  .side{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 24px}
+  .side-card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .side-card .side-label{padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+  .side-card .side-label.old{background:var(--red-soft);color:var(--red)}
+  .side-card .side-label.new{background:var(--green-soft);color:var(--green)}
+  .side-card .side-body{padding:14px 16px}
+  .side-card .side-body pre{font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--text);white-space:pre;margin:0}
+
+  /* ─── GUIDE DIVIDER ─────────────────── */
+  .guide-divider{margin:80px 0 48px;padding:40px 0 0;border-top:2px solid var(--accent);position:relative}
+  .guide-divider .gd-label{position:absolute;top:-12px;left:0;background:var(--bg);padding:0 12px 0 0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}
+
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.5} }
+
+  @media(max-width:900px){
+    .side{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">Render Workflows <span class="pill">Beta</span></div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-label">Start here</div>
+      <a href="#top" class="on">What is Workflows</a>
+      <a href="#problem">The problem</a>
+      <a href="#usecases">Use cases</a>
+      <a href="#quickstart">Getting started</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Concepts</div>
+      <a href="#how">How it works</a>
+      <a href="#arch">Architecture</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Build</div>
+      <a href="#tasks">Define tasks</a>
+      <a href="#chain">Chain &amp; fan-out</a>
+      <a href="#trigger">Trigger runs</a>
+      <a href="#retry">Retry &amp; timeout</a>
+      <a href="#compute">Instance types</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Operate</div>
+      <a href="#observe">Observability</a>
+      <a href="#manage">Run management</a>
+      <a href="#sse">Streaming events</a>
+      <a href="#local">Local development</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Guides</div>
+      <a href="#guides">All guides</a>
+      <a href="#guide-video" style="padding-left:18px;font-size:12.5px;">Video &amp; file processing</a>
+      <a href="#guide-etl" style="padding-left:18px;font-size:12.5px;">ETL pipeline</a>
+      <a href="#guide-ai" style="padding-left:18px;font-size:12.5px;">AI agent workflow</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Migrate from…</div>
+      <a href="#migrate-celery">Celery</a>
+      <a href="#migrate-temporal">Temporal</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Reference</div>
+      <a href="#sdk-ref">SDK reference</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#chooser">Workflows vs. other services</a>
+      <a href="#limits">Limits</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="top">
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  HERO — PROBLEM-FIRST                  -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <div class="beta-pill">&#x1F6A7;&nbsp; Public Beta</div>
+
+  <h1>Long-running tasks, without the infrastructure</h1>
+
+  <p class="lead">Render Workflows lets you break complex jobs into tasks that each run in their own instance — with queuing, retries, and orchestration handled for you. Define tasks as functions. Trigger them from anywhere. Chain them together. Pay per second.</p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  THE PROBLEM                            -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="problem">The problem Workflows solves</h2>
+
+  <p>When your app needs to run work that's <strong>long-running</strong>, <strong>multi-step</strong>, or <strong>compute-intensive</strong> — an AI agent making tool calls, a pipeline processing thousands of documents, an ETL job enriching records from an API — you typically end up building a lot of infrastructure around the actual logic:</p>
+
+  <div class="ba-grid">
+    <div class="ba-card before">
+      <div class="ba-tag">Without Workflows</div>
+      <ul>
+        <li>Provision and manage a message queue (Redis, SQS, RabbitMQ)</li>
+        <li>Write queue consumers, polling loops, and dead-letter handling</li>
+        <li>Implement your own retry logic with backoff</li>
+        <li>Build a worker pool and manage concurrency limits</li>
+        <li>Stitch together monitoring across multiple services</li>
+        <li>Pay for always-on worker instances, even when idle</li>
+      </ul>
+    </div>
+    <div class="ba-card after">
+      <div class="ba-tag">With Workflows</div>
+      <ul>
+        <li>Mark functions as tasks with the Render SDK</li>
+        <li>Render queues, provisions, and deprovisions instances</li>
+        <li>Built-in retries with configurable exponential backoff</li>
+        <li>Chain tasks with <code>Promise.all</code> / <code>asyncio.gather</code></li>
+        <li>Track every run in the Dashboard — status, duration, chain</li>
+        <li>Per-second billing — no compute cost when nothing's running</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>Your code stays focused on <strong>what</strong> to compute. Render handles <strong>how</strong> it gets orchestrated, retried, and provisioned.</p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  USE CASES — SCENARIO-SPECIFIC          -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="usecases">What people build with Workflows</h2>
+
+  <p>Workflows is designed for jobs where individual steps are <strong>long-running</strong>, benefit from <strong>independent compute</strong>, and need <strong>orchestration</strong> between them. Here are the patterns we see most:</p>
+
+  <div class="scenarios">
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--accent-soft);">&#x1F916;</div>
+      <div>
+        <h4>AI agents with tool calling</h4>
+        <p>An orchestrator task calls an LLM, interprets the response, and chains specialized tool tasks — web search, code execution, data retrieval — each in its own instance with its own compute specs and retry policy. The agent loops until it reaches a final answer. Each tool call is isolated so a transient API failure retries that step, not the whole conversation.</p>
+      </div>
+    </div>
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--orange-soft);">&#x1F504;</div>
+      <div>
+        <h4>ETL and data pipelines</h4>
+        <p>Extract records from an API, transform each batch in parallel across multiple instances, then load the results into Postgres. Give the extract step a <code>starter</code> instance and the compute-heavy transform step a <code>pro</code> instance. If a batch fails, the retry config re-runs just that batch — not the entire pipeline.</p>
+      </div>
+    </div>
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--green-soft);">&#x1F5BC;&#xFE0F;</div>
+      <div>
+        <h4>Media and document processing</h4>
+        <p>Fan out image resizing, video transcoding, or PDF extraction across dozens of parallel instances. A parent task splits a batch of URLs, chains a <code>processImage</code> task per URL using <code>Promise.all</code>, then collects the results. Each child gets its own 2-CPU instance and up to 24 hours to complete.</p>
+      </div>
+    </div>
+    <div class="scenario">
+      <div class="sc-icon" style="background: var(--blue-soft);">&#x1F310;</div>
+      <div>
+        <h4>Batch API enrichment</h4>
+        <p>Enrich thousands of CRM records by calling third-party APIs — geocoding, company data, email verification. Each API call runs as an isolated task with per-call retries and rate-limit-friendly exponential backoff. The parent task coordinates the fan-out and aggregates enriched records back into your database.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  GETTING STARTED                        -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="quickstart">Get started in 5 minutes</h2>
+
+  <p>Go from zero to a running workflow with the Render CLI. You'll scaffold a project, deploy it, and trigger your first run.</p>
+
+  <h3>1. Install the Render CLI</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar">
+      <button class="code-btn on" data-t="cli1">Homebrew</button>
+      <button class="code-btn" data-t="cli2">Linux / macOS</button>
+    </div>
+    <div class="code-pane on" id="cli1"><pre>brew update
+brew install render</pre></div>
+    <div class="code-pane" id="cli2"><pre>curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh</pre></div>
+  </div>
+
+  <h3>2. Scaffold your workflow</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><button class="code-btn on">Terminal</button></div>
+    <div class="code-pane on"><pre><span class="c"># Interactive: choose language, template, directory</span>
+render workflows init
+
+<span class="c"># Or non-interactive (great for CI / coding agents):</span>
+render workflows init \
+  --confirm \
+  --language ts \
+  --template hello-world \
+  --dir my-workflow \
+  --install-deps \
+  --git</pre></div>
+  </div>
+
+  <p>This generates a project with your first task definition, dependencies installed, and a Git repo initialized. The <strong>Hello World</strong> template gives you a minimal task you can modify immediately.</p>
+
+  <h3>3. Push and deploy</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><button class="code-btn on">Terminal</button></div>
+    <div class="code-pane on"><pre><span class="c"># Commit and push to GitHub / GitLab / Bitbucket</span>
+cd my-workflow
+git add . && git commit -m <span class="s">"Initial commit"</span>
+git remote add origin &lt;your-repo-url&gt;
+git push -u origin main</pre></div>
+  </div>
+
+  <p>Then in the <strong>Render Dashboard</strong>, click <strong>New → Workflow</strong>, link your repo, and click <strong>Deploy Workflow</strong>. Render builds your project and automatically registers all tasks it finds.</p>
+
+  <h3>4. Trigger your first run</h3>
+
+  <p>From the Dashboard, click into your task and hit <strong>Start Task</strong>. Provide input as a JSON array (e.g. <code>[5]</code>) and watch the run execute. Or trigger from code:</p>
+
+  <div class="code-wrap" data-g="lang">
+    <div class="code-bar">
+      <button class="code-btn on" data-t="qs1">TypeScript</button>
+      <button class="code-btn" data-t="qs2">Python</button>
+    </div>
+    <div class="code-pane on" id="qs1"><pre><span class="k">import</span> { Render } <span class="k">from</span> <span class="s">'@renderinc/sdk'</span>
+
+<span class="k">const</span> render = <span class="k">new</span> <span class="f">Render</span>()
+<span class="k">const</span> result = <span class="k">await</span> render.workflows.<span class="f">runTask</span>(
+  <span class="s">'my-workflow/calculateSquare'</span>, [<span class="n">5</span>]
+)
+console.<span class="f">log</span>(result.results) <span class="c">// 25</span></pre></div>
+    <div class="code-pane" id="qs2"><pre><span class="k">from</span> render_sdk <span class="k">import</span> Render
+
+render = <span class="f">Render</span>()
+result = render.workflows.<span class="f">run_task</span>(
+    <span class="s">"my-workflow/calculate_square"</span>, [<span class="n">5</span>]
+)
+<span class="f">print</span>(result.results)  <span class="c"># 25</span></pre></div>
+  </div>
+
+  <div class="callout green">
+    <strong>Next steps:</strong> Edit the generated task file to add your own logic, configure retry/timeout/instance type, and <a href="#chain">chain tasks together</a>. See the full <a href="https://render.com/docs/workflows-tutorial">tutorial</a> for a detailed walkthrough with screenshots.
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  HOW IT WORKS                           -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="how">How it works</h2>
+
+  <p>The model is simple: you write <strong>functions</strong>, Render turns them into <strong>independently executable tasks</strong> that each run in their own provisioned instance.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 680 170" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs>
+        <pattern id="d1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.5" fill="#26262e"/>
+        </pattern>
+        <marker id="a1" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#7c6aff"/>
+        </marker>
+      </defs>
+      <rect width="680" height="170" fill="url(#d1)" rx="8"/>
+
+      <!-- Step labels -->
+      <text x="62" y="22" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="10" font-weight="700" letter-spacing="0.08em">DEFINE</text>
+      <text x="215" y="22" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="10" font-weight="700" letter-spacing="0.08em">DEPLOY</text>
+      <text x="368" y="22" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="10" font-weight="700" letter-spacing="0.08em">TRIGGER</text>
+      <text x="525" y="22" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="10" font-weight="700" letter-spacing="0.08em">EXECUTE</text>
+
+      <!-- Define -->
+      <rect x="12" y="36" width="100" height="70" rx="8" fill="#18181d" stroke="#3a3a46"/>
+      <text x="62" y="63" text-anchor="middle" fill="#f472b6" font-family="JetBrains Mono" font-size="10" font-weight="600">task()</text>
+      <text x="62" y="80" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">Mark functions</text>
+      <text x="62" y="93" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">as tasks in code</text>
+
+      <line x1="112" y1="71" x2="150" y2="71" stroke="#7c6aff" stroke-width="1.5" marker-end="url(#a1)"/>
+
+      <!-- Deploy -->
+      <rect x="155" y="36" width="120" height="70" rx="8" fill="#18181d" stroke="#3a3a46"/>
+      <text x="215" y="60" text-anchor="middle" fill="#22d3ee" font-family="JetBrains Mono" font-size="10" font-weight="600">git push</text>
+      <text x="215" y="78" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">Render auto-registers</text>
+      <text x="215" y="91" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">tasks from your repo</text>
+
+      <line x1="275" y1="71" x2="313" y2="71" stroke="#7c6aff" stroke-width="1.5" marker-end="url(#a1)"/>
+
+      <!-- Trigger -->
+      <rect x="318" y="36" width="100" height="70" rx="8" fill="#18181d" stroke="#3a3a46"/>
+      <text x="368" y="60" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="10" font-weight="600">startTask()</text>
+      <text x="368" y="78" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">From any app,</text>
+      <text x="368" y="91" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">agent, or API call</text>
+
+      <line x1="418" y1="71" x2="460" y2="71" stroke="#7c6aff" stroke-width="1.5" marker-end="url(#a1)"/>
+
+      <!-- Execute -->
+      <rect x="465" y="36" width="120" height="70" rx="8" fill="#18181d" stroke="#34d399" stroke-width="1.5"/>
+      <text x="525" y="58" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="10.5" font-weight="700">Fresh instance</text>
+      <text x="525" y="75" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">Spins up in &lt;1s</text>
+      <text x="525" y="88" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="9.5">Runs → returns JSON</text>
+
+      <!-- Chain label -->
+      <rect x="465" y="120" width="120" height="40" rx="8" fill="#18181d" stroke="#60a5fa" stroke-dasharray="4 3"/>
+      <text x="525" y="138" text-anchor="middle" fill="#60a5fa" font-family="DM Sans" font-size="9.5" font-weight="600">Can chain more tasks →</text>
+      <text x="525" y="151" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">Each in its own instance</text>
+
+      <line x1="525" y1="106" x2="525" y2="120" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <!-- Result -->
+      <rect x="610" y="36" width="58" height="70" rx="8" fill="#18181d" stroke="#34d399" stroke-dasharray="4 3"/>
+      <text x="639" y="66" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="10" font-weight="600">Result</text>
+      <text x="639" y="82" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">JSON</text>
+
+      <line x1="585" y1="71" x2="610" y2="71" stroke="#34d399" stroke-width="1.5" marker-end="url(#a1)"/>
+    </svg>
+    <p class="diagram-cap">Define → Deploy → Trigger → Execute (chain optionally) → Result</p>
+  </div>
+
+  <p>Key properties of the execution model:</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Instance-per-run</h4>
+      <p>Every run gets a dedicated instance. No noisy neighbors. Choose from 0.5 CPU to 16 CPU per task.</p>
+    </div>
+    <div class="feat">
+      <h4>Sub-second spin-up</h4>
+      <p>Render provisions each run's instance in under a second. No cold starts to manage.</p>
+    </div>
+    <div class="feat">
+      <h4>Up to 24 hours</h4>
+      <p>Each run can execute for up to 24 hours. Configurable timeout per task from 30s to 24h.</p>
+    </div>
+    <div class="feat">
+      <h4>Auto-deprovisioned</h4>
+      <p>When a run completes (or fails after retries), its instance is cleaned up. No idle cost.</p>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  ARCHITECTURE                           -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="arch">Architecture</h2>
+  <p>Runs execute inside the Render platform and can reach your <strong>Postgres databases</strong>, <strong>Redis caches</strong>, and <strong>other services</strong> over the private network. They can also call external APIs over the public internet. Runs <strong>cannot</strong> receive incoming connections.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 660 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs>
+        <pattern id="d2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.5" fill="#26262e"/>
+        </pattern>
+        <marker id="a2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#7c6aff"/>
+        </marker>
+      </defs>
+      <rect width="660" height="300" fill="url(#d2)" rx="8"/>
+
+      <!-- Your App -->
+      <rect x="14" y="120" width="100" height="52" rx="8" fill="#18181d" stroke="#3a3a46"/>
+      <text x="64" y="143" text-anchor="middle" fill="#dfdfe5" font-family="DM Sans" font-size="11" font-weight="600">Your App</text>
+      <text x="64" y="159" text-anchor="middle" fill="#8b8b9e" font-family="JetBrains Mono" font-size="9">startTask()</text>
+
+      <line x1="114" y1="146" x2="156" y2="146" stroke="#7c6aff" stroke-width="1.5" marker-end="url(#a2)"/>
+
+      <!-- Render Platform -->
+      <rect x="156" y="16" width="490" height="268" rx="10" fill="none" stroke="#26262e" stroke-dasharray="6 4"/>
+      <text x="170" y="36" fill="#56566a" font-family="DM Sans" font-size="9.5" font-weight="700" letter-spacing="0.1em">RENDER PLATFORM</text>
+
+      <!-- Queue -->
+      <rect x="172" y="120" width="88" height="52" rx="8" fill="#18181d" stroke="#7c6aff"/>
+      <text x="216" y="143" text-anchor="middle" fill="#7c6aff" font-family="DM Sans" font-size="10.5" font-weight="600">Queue</text>
+      <text x="216" y="158" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">Orchestration</text>
+
+      <!-- Parent -->
+      <rect x="290" y="52" width="120" height="56" rx="8" fill="#18181d" stroke="#34d399" stroke-width="1.5"/>
+      <text x="350" y="74" text-anchor="middle" fill="#34d399" font-family="JetBrains Mono" font-size="10" font-weight="600">orchestrate</text>
+      <text x="350" y="96" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8.5">standard · 1 CPU</text>
+
+      <!-- Child A -->
+      <rect x="290" y="126" width="120" height="50" rx="8" fill="#18181d" stroke="#60a5fa"/>
+      <text x="350" y="148" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="10" font-weight="600">processImage</text>
+      <text x="350" y="166" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8.5">pro · 2 CPU</text>
+
+      <!-- Child B -->
+      <rect x="290" y="194" width="120" height="50" rx="8" fill="#18181d" stroke="#60a5fa"/>
+      <text x="350" y="216" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="10" font-weight="600">processImage</text>
+      <text x="350" y="234" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8.5">pro · 2 CPU</text>
+
+      <!-- Queue arrows -->
+      <line x1="260" y1="138" x2="290" y2="80" stroke="#7c6aff" stroke-width="1.2" marker-end="url(#a2)"/>
+      <line x1="260" y1="146" x2="290" y2="146" stroke="#7c6aff" stroke-width="1.2" marker-end="url(#a2)"/>
+      <line x1="260" y1="154" x2="290" y2="214" stroke="#7c6aff" stroke-width="1.2" marker-end="url(#a2)"/>
+
+      <!-- Private network services -->
+      <rect x="460" y="52" width="90" height="42" rx="7" fill="#18181d" stroke="#3a3a46"/>
+      <text x="505" y="70" text-anchor="middle" fill="#dfdfe5" font-family="DM Sans" font-size="10" font-weight="500">Postgres</text>
+      <text x="505" y="84" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="8">Private network</text>
+
+      <rect x="460" y="108" width="90" height="42" rx="7" fill="#18181d" stroke="#3a3a46"/>
+      <text x="505" y="126" text-anchor="middle" fill="#dfdfe5" font-family="DM Sans" font-size="10" font-weight="500">Redis</text>
+      <text x="505" y="140" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="8">Private network</text>
+
+      <rect x="460" y="164" width="90" height="42" rx="7" fill="#18181d" stroke="#3a3a46"/>
+      <text x="505" y="182" text-anchor="middle" fill="#dfdfe5" font-family="DM Sans" font-size="10" font-weight="500">Web Service</text>
+      <text x="505" y="196" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="8">Private network</text>
+
+      <!-- External -->
+      <rect x="460" y="228" width="90" height="42" rx="7" fill="#18181d" stroke="#f59e0b" stroke-dasharray="4 3"/>
+      <text x="505" y="246" text-anchor="middle" fill="#f59e0b" font-family="DM Sans" font-size="10" font-weight="500">OpenAI API</text>
+      <text x="505" y="260" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="8">Public internet</text>
+
+      <!-- Connecting lines -->
+      <line x1="410" y1="75" x2="460" y2="72" stroke="#3a3a46" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="410" y1="148" x2="460" y2="128" stroke="#3a3a46" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="410" y1="148" x2="460" y2="184" stroke="#3a3a46" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="410" y1="218" x2="460" y2="248" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <!-- Private network label -->
+      <text x="570" y="140" fill="#3a3a46" font-family="DM Sans" font-size="9" transform="rotate(90, 570, 140)">PRIVATE NETWORK</text>
+    </svg>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  DEFINE TASKS                           -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="tasks">Defining tasks</h2>
+  <p>A task is a function you register with the Render SDK. You declare its name, compute size, timeout, and retry behavior alongside the function itself. Arguments and return values must be <strong>JSON-serializable</strong>.</p>
+
+  <div class="code-wrap" data-g="lang">
+    <div class="code-bar">
+      <button class="code-btn on" data-t="t1">TypeScript</button>
+      <button class="code-btn" data-t="t2">Python</button>
+    </div>
+    <div class="code-pane on" id="t1"><pre><span class="k">import</span> { task } <span class="k">from</span> <span class="s">'@renderinc/sdk/workflows'</span>
+
+<span class="c">// Each task declaration = one independently runnable unit</span>
+<span class="k">const</span> enrichCompany = <span class="f">task</span>(
+  {
+    <span class="t">name</span>: <span class="s">'enrichCompany'</span>,
+    <span class="t">plan</span>: <span class="s">'starter'</span>,           <span class="c">// 0.5 CPU, 512 MB — lightweight API calls</span>
+    <span class="t">timeoutSeconds</span>: <span class="n">300</span>,       <span class="c">// 5 min max</span>
+    <span class="t">retry</span>: {
+      <span class="t">maxRetries</span>: <span class="n">4</span>,           <span class="c">// Up to 5 total attempts</span>
+      <span class="t">waitDurationMs</span>: <span class="n">2000</span>,    <span class="c">// 2s initial backoff</span>
+      <span class="t">backoffScaling</span>: <span class="n">1.5</span>,     <span class="c">// 2s → 3s → 4.5s → 6.75s</span>
+    },
+  },
+  <span class="k">async function</span> <span class="f">enrichCompany</span>(domain: <span class="t">string</span>): Promise&lt;<span class="t">CompanyData</span>&gt; {
+    <span class="k">const</span> res = <span class="k">await</span> <span class="f">fetch</span>(<span class="s">`https://api.clearbit.com/v2/companies/find?domain=</span>${domain}<span class="s">`</span>)
+    <span class="k">if</span> (!res.ok) <span class="k">throw new</span> Error(<span class="s">`Clearbit </span>${res.status}<span class="s">`</span>)  <span class="c">// triggers retry</span>
+    <span class="k">return</span> <span class="k">await</span> res.<span class="f">json</span>()
+  }
+)</pre></div>
+    <div class="code-pane" id="t2"><pre><span class="k">from</span> render_sdk <span class="k">import</span> Workflows
+
+app = <span class="f">Workflows</span>()
+
+<span class="d">@app.task</span>(
+    plan=<span class="s">"starter"</span>,              <span class="c"># 0.5 CPU, 512 MB</span>
+    timeout_seconds=<span class="n">300</span>,        <span class="c"># 5 min max</span>
+    retry={
+        <span class="s">"max_retries"</span>: <span class="n">4</span>,
+        <span class="s">"wait_duration_ms"</span>: <span class="n">2000</span>,
+        <span class="s">"backoff_scaling"</span>: <span class="n">1.5</span>,
+    },
+)
+<span class="k">async def</span> <span class="f">enrich_company</span>(domain: <span class="t">str</span>) -> <span class="t">dict</span>:
+    res = <span class="k">await</span> <span class="f">httpx.get</span>(
+        <span class="s">f"https://api.clearbit.com/v2/companies/find?domain=</span>{domain}<span class="s">"</span>
+    )
+    res.<span class="f">raise_for_status</span>()  <span class="c"># triggers retry on failure</span>
+    <span class="k">return</span> res.<span class="f">json</span>()</pre></div>
+  </div>
+
+  <div class="callout green">
+    <strong>Multi-file organization:</strong> Spread tasks across files. In TypeScript, import them from your entry point. In Python, compose apps with <code>Workflows.from_workflows()</code>.
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  CHAINING + FAN-OUT                     -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="chain">Chaining and fan-out</h2>
+  <p>A running task can <strong>call other task functions</strong>. Each call triggers a new run in its own instance. The caller gets a Promise (TS) or awaitable (Python) for the result. Use <code>Promise.all</code> or <code>asyncio.gather</code> to fan out work in parallel.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 620 140" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs>
+        <pattern id="d3" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.5" fill="#26262e"/>
+        </pattern>
+        <marker id="a3" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#34d399"/>
+        </marker>
+        <marker id="a4" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#60a5fa"/>
+        </marker>
+      </defs>
+      <rect width="620" height="140" fill="url(#d3)" rx="8"/>
+
+      <!-- Parent -->
+      <rect x="10" y="40" width="120" height="55" rx="8" fill="#18181d" stroke="#34d399" stroke-width="1.5"/>
+      <text x="70" y="63" text-anchor="middle" fill="#34d399" font-family="JetBrains Mono" font-size="10.5" font-weight="600">batchEnrich</text>
+      <text x="70" y="82" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">Parent · standard</text>
+
+      <!-- Fan-out arrows -->
+      <line x1="130" y1="55" x2="175" y2="30" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#a4)"/>
+      <line x1="130" y1="62" x2="175" y2="58" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#a4)"/>
+      <line x1="130" y1="70" x2="175" y2="86" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#a4)"/>
+      <line x1="130" y1="78" x2="175" y2="114" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#a4)"/>
+
+      <!-- Children -->
+      <rect x="180" y="10" width="110" height="36" rx="6" fill="#18181d" stroke="#60a5fa"/>
+      <text x="235" y="32" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">enrichCompany</text>
+      <rect x="180" y="52" width="110" height="36" rx="6" fill="#18181d" stroke="#60a5fa"/>
+      <text x="235" y="74" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">enrichCompany</text>
+      <rect x="180" y="94" width="110" height="36" rx="6" fill="#18181d" stroke="#60a5fa"/>
+      <text x="235" y="116" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">enrichCompany</text>
+
+      <!-- ... -->
+      <text x="235" y="143" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="10">· · ·</text>
+
+      <!-- Converge -->
+      <line x1="290" y1="28" x2="330" y2="60" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="290" y1="70" x2="330" y2="60" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="290" y1="112" x2="330" y2="60" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <text x="340" y="45" fill="#60a5fa" font-family="JetBrains Mono" font-size="8.5">Promise.all()</text>
+
+      <!-- Result -->
+      <rect x="335" y="54" width="48" height="24" rx="6" fill="#18181d" stroke="#34d399" stroke-dasharray="3 3"/>
+      <text x="359" y="70" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="9" font-weight="600">→</text>
+
+      <!-- Code snippet in diagram -->
+      <rect x="400" y="18" width="210" height="104" rx="8" fill="#18181d" stroke="#26262e"/>
+      <text x="412" y="38" fill="#56566a" font-family="JetBrains Mono" font-size="8.5">// Fan-out pattern</text>
+      <text x="412" y="52" fill="#f472b6" font-family="JetBrains Mono" font-size="8.5">const</text><text x="442" y="52" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5"> results =</text>
+      <text x="420" y="66" fill="#f472b6" font-family="JetBrains Mono" font-size="8.5">await</text><text x="453" y="66" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5"> Promise.</text><text x="505" y="66" fill="#60a5fa" font-family="JetBrains Mono" font-size="8.5">all</text><text x="518" y="66" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5">(</text>
+      <text x="428" y="80" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5">domains.</text><text x="480" y="80" fill="#60a5fa" font-family="JetBrains Mono" font-size="8.5">map</text><text x="500" y="80" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5">(d =></text>
+      <text x="436" y="94" fill="#60a5fa" font-family="JetBrains Mono" font-size="8.5">enrichCompany</text><text x="530" y="94" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5">(d)</text>
+      <text x="428" y="108" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5">)</text>
+      <text x="420" y="118" fill="#dfdfe5" font-family="JetBrains Mono" font-size="8.5">)</text>
+    </svg>
+    <p class="diagram-cap">Each enrichCompany call spins up a separate instance. Promise.all awaits all in parallel.</p>
+  </div>
+
+  <div class="callout orange">
+    <strong>Serial by default.</strong> Without <code>Promise.all</code> or <code>asyncio.gather</code>, chained runs execute one after another. Always wrap parallel work explicitly.
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  TRIGGERING                             -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="trigger">Triggering runs</h2>
+  <p>Trigger runs from <strong>any TypeScript or Python app</strong> using the Render SDK, from <strong>any language</strong> via the REST API, or <strong>manually</strong> from the Dashboard and CLI.</p>
+
+  <div class="code-wrap" data-g="lang">
+    <div class="code-bar">
+      <button class="code-btn on" data-t="tr1">TypeScript</button>
+      <button class="code-btn" data-t="tr2">Python</button>
+      <button class="code-btn" data-t="tr3">REST API</button>
+    </div>
+    <div class="code-pane on" id="tr1"><pre><span class="k">import</span> { Render } <span class="k">from</span> <span class="s">'@renderinc/sdk'</span>
+
+<span class="k">const</span> render = <span class="k">new</span> <span class="f">Render</span>()  <span class="c">// reads RENDER_API_KEY from env</span>
+
+<span class="c">// Fire-and-forget: kicks off the run, returns immediately</span>
+<span class="k">const</span> started = <span class="k">await</span> render.workflows.<span class="f">startTask</span>(
+  <span class="s">'my-workflow/enrichCompany'</span>,
+  [<span class="s">'stripe.com'</span>]
+)
+
+<span class="c">// Retrieve the result when ready</span>
+<span class="k">const</span> finished = <span class="k">await</span> started.<span class="f">get</span>()
+console.<span class="f">log</span>(finished.results)  <span class="c">// CompanyData JSON</span>
+
+<span class="c">// Or: trigger + wait in one call</span>
+<span class="k">const</span> result = <span class="k">await</span> render.workflows.<span class="f">runTask</span>(
+  <span class="s">'my-workflow/enrichCompany'</span>,
+  [<span class="s">'stripe.com'</span>]
+)</pre></div>
+    <div class="code-pane" id="tr2"><pre><span class="k">from</span> render_sdk <span class="k">import</span> RenderAsync
+
+render = <span class="f">RenderAsync</span>()
+
+started = <span class="k">await</span> render.workflows.<span class="f">start_task</span>(
+    <span class="s">"my-workflow/enrich_company"</span>, [<span class="s">"stripe.com"</span>]
+)
+finished = <span class="k">await</span> started
+<span class="f">print</span>(finished.results)</pre></div>
+    <div class="code-pane" id="tr3"><pre><span class="c"># Works from any language</span>
+curl -X POST https://api.render.com/v1/workflows/tasks/run \
+  -H <span class="s">"Authorization: Bearer $RENDER_API_KEY"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"taskIdentifier":"my-workflow/enrichCompany","inputData":["stripe.com"]}'</span></pre></div>
+  </div>
+
+  <p>The task identifier is always <code>{workflow-slug}/{task-name}</code> — find it in the Dashboard on each task's page.</p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  RETRY & TIMEOUT                        -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="retry">Built-in retries with exponential backoff</h2>
+  <p>When a run throws an error, Render retries it automatically. A run that throws is never a silent failure — it's retried up to <code>maxRetries</code> times with increasing delays between attempts.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs>
+        <pattern id="d4" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.5" fill="#26262e"/>
+        </pattern>
+      </defs>
+      <rect width="600" height="100" fill="url(#d4)" rx="8"/>
+
+      <rect x="16" y="18" width="80" height="42" rx="6" fill="#ef444414" stroke="#ef4444"/>
+      <text x="56" y="36" text-anchor="middle" fill="#ef4444" font-family="DM Sans" font-size="10" font-weight="600">Attempt 1</text>
+      <text x="56" y="50" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="8.5">throws</text>
+
+      <text x="118" y="32" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8">1s</text>
+      <line x1="96" y1="39" x2="136" y2="39" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <rect x="140" y="18" width="80" height="42" rx="6" fill="#ef444414" stroke="#ef4444"/>
+      <text x="180" y="36" text-anchor="middle" fill="#ef4444" font-family="DM Sans" font-size="10" font-weight="600">Retry 1</text>
+      <text x="180" y="50" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="8.5">throws</text>
+
+      <text x="244" y="32" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8">2s</text>
+      <line x1="220" y1="39" x2="264" y2="39" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <rect x="268" y="18" width="80" height="42" rx="6" fill="#ef444414" stroke="#ef4444"/>
+      <text x="308" y="36" text-anchor="middle" fill="#ef4444" font-family="DM Sans" font-size="10" font-weight="600">Retry 2</text>
+      <text x="308" y="50" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="8.5">throws</text>
+
+      <text x="374" y="32" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8">4s</text>
+      <line x1="348" y1="39" x2="398" y2="39" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <rect x="402" y="18" width="100" height="42" rx="6" fill="#34d39914" stroke="#34d399"/>
+      <text x="452" y="36" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="10" font-weight="600">Retry 3 &#x2713;</text>
+      <text x="452" y="50" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="8.5">succeeds</text>
+
+      <text x="300" y="85" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">Delay = waitDurationMs × backoffScaling<tspan font-size="7" baseline-shift="super">n</tspan></text>
+    </svg>
+  </div>
+
+  <table class="tbl">
+    <thead><tr><th>Setting</th><th>Default</th><th>Range</th></tr></thead>
+    <tbody>
+      <tr><td><code>maxRetries</code></td><td>3</td><td>0+</td></tr>
+      <tr><td><code>waitDurationMs</code></td><td>1,000 ms</td><td>Any positive int</td></tr>
+      <tr><td><code>backoffScaling</code></td><td>2 (or 1.5 if retry object provided)</td><td>Any positive number</td></tr>
+      <tr><td><code>timeoutSeconds</code></td><td>7,200 (2 hours)</td><td>30 – 86,400 (24 hours)</td></tr>
+    </tbody>
+  </table>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  COMPUTE                                -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="compute">Right-size each task's compute</h2>
+  <p>Different tasks need different resources. A lightweight orchestrator might use <code>starter</code> while a CPU-intensive ML step uses <code>pro</code> or larger. Set it per task, pay per second.</p>
+
+  <div class="inst-row">
+    <div class="inst">
+      <div class="iname">starter</div>
+      <div class="ispec">0.5 CPU</div>
+      <div class="iram">512 MB</div>
+      <div class="iprice">$0.05/hr</div>
+    </div>
+    <div class="inst hl">
+      <div class="iname">standard</div>
+      <div class="ispec">1 CPU</div>
+      <div class="iram">2 GB</div>
+      <div class="iprice">$0.20/hr</div>
+    </div>
+    <div class="inst">
+      <div class="iname">pro</div>
+      <div class="ispec">2 CPU</div>
+      <div class="iram">4 GB</div>
+      <div class="iprice">$0.40/hr</div>
+    </div>
+  </div>
+  <p>Larger instances (<code>pro_plus</code> 4 CPU → <code>pro_ultra</code> 16 CPU / 32 GB) available by request. Set workflow-wide defaults and override per task.</p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  OBSERVABILITY                          -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="observe">See every run at a glance</h2>
+  <p>The Render Dashboard gives you a live view of registered tasks and all runs — status, duration, inputs, outputs, and parent-child relationships.</p>
+
+  <div class="obs-mock">
+    <div class="obs-titlebar">
+      <div class="obs-dot" style="background:#ef4444;"></div>
+      <div class="obs-dot" style="background:#f59e0b;"></div>
+      <div class="obs-dot" style="background:#34d399;"></div>
+      <span>my-workflow &nbsp;·&nbsp; Task Runs</span>
+    </div>
+    <div class="obs-body">
+      <div class="obs-row" style="border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--text-dim);font-weight:600;">TASK</span>
+        <span style="font-size:10px;color:var(--text-dim);font-weight:600;">STATUS</span>
+        <span style="font-size:10px;color:var(--text-dim);font-weight:600;">TIMELINE</span>
+        <span style="font-size:10px;color:var(--text-dim);font-weight:600;text-align:right;">DURATION</span>
+      </div>
+      <div class="obs-row">
+        <span class="obs-task">batchEnrich</span>
+        <span class="obs-status ok">succeeded</span>
+        <div class="obs-bar-track"><div class="obs-bar-fill" style="width:90%;background:var(--green);"></div></div>
+        <span class="obs-dur">4m 12s</span>
+      </div>
+      <div class="obs-row">
+        <span class="obs-task" style="padding-left:16px;color:var(--blue);">↳ enrichCompany</span>
+        <span class="obs-status ok">succeeded</span>
+        <div class="obs-bar-track"><div class="obs-bar-fill" style="width:22%;background:var(--blue);left:5%;"></div></div>
+        <span class="obs-dur">8.2s</span>
+      </div>
+      <div class="obs-row">
+        <span class="obs-task" style="padding-left:16px;color:var(--blue);">↳ enrichCompany</span>
+        <span class="obs-status ok">succeeded</span>
+        <div class="obs-bar-track"><div class="obs-bar-fill" style="width:28%;background:var(--blue);left:5%;"></div></div>
+        <span class="obs-dur">12.1s</span>
+      </div>
+      <div class="obs-row">
+        <span class="obs-task" style="padding-left:16px;color:var(--blue);">↳ enrichCompany</span>
+        <span class="obs-status run">running</span>
+        <div class="obs-bar-track"><div class="obs-bar-fill" style="width:45%;background:var(--blue);left:5%;animation:pulse 1.5s ease-in-out infinite;"></div></div>
+        <span class="obs-dur">…</span>
+      </div>
+      <div class="obs-row">
+        <span class="obs-task" style="padding-left:16px;color:var(--red);">↳ enrichCompany</span>
+        <span class="obs-status fail">failed</span>
+        <div class="obs-bar-track"><div class="obs-bar-fill" style="width:12%;background:var(--red);left:5%;"></div></div>
+        <span class="obs-dur">3.4s</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat-grid">
+    <div class="feat"><h4>Task registry</h4><p>All registered tasks visible after deploy with slug, config, and instance type.</p></div>
+    <div class="feat"><h4>Run tracking</h4><p>Status, duration, retry count, timestamps for every active and completed run.</p></div>
+    <div class="feat"><h4>Chain tracing</h4><p>See parent → child relationships. Filter by <code>rootTaskRunId</code> in the SDK.</p></div>
+    <div class="feat"><h4>Manual triggers</h4><p>Test tasks from Dashboard or CLI without writing trigger code.</p></div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  RUN MANAGEMENT                         -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="manage">Run management</h2>
+  <p>List, inspect, and cancel runs programmatically. Filter by task, workflow, version, or root run ID. Paginate with cursors.</p>
+
+  <div class="code-wrap">
+    <div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+    <div class="code-pane on"><pre><span class="k">const</span> render = <span class="k">new</span> <span class="f">Render</span>()
+
+<span class="c">// List runs for a task</span>
+<span class="k">const</span> runs = <span class="k">await</span> render.workflows.<span class="f">listTaskRuns</span>({
+  taskId: [<span class="s">'task-abc123'</span>], limit: <span class="n">20</span>
+})
+
+<span class="c">// Inspect a specific run</span>
+<span class="k">const</span> run = <span class="k">await</span> render.workflows.<span class="f">getTaskRun</span>(<span class="s">'trn-xyz789'</span>)
+console.<span class="f">log</span>(run.status, run.results)
+
+<span class="c">// Cancel a running task</span>
+<span class="k">await</span> render.workflows.<span class="f">cancelTaskRun</span>(<span class="s">'trn-xyz789'</span>)</pre></div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  SSE                                    -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="sse">Stream completion events</h2>
+  <p>Subscribe to run completions over <strong>Server-Sent Events (SSE)</strong> with <code>taskRunEvents()</code>. Useful for monitoring dashboards or triggering downstream actions.</p>
+
+  <div class="code-wrap">
+    <div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+    <div class="code-pane on"><pre><span class="k">const</span> controller = <span class="k">new</span> <span class="f">AbortController</span>()
+
+<span class="k">for await</span> (<span class="k">const</span> event <span class="k">of</span> render.workflows.<span class="f">taskRunEvents</span>(
+  [<span class="s">'trn-abc123'</span>, <span class="s">'trn-def456'</span>], controller.signal
+)) {
+  console.<span class="f">log</span>(<span class="s">`Run </span>${event.id}<span class="s"> → </span>${event.status}<span class="s">`</span>)
+}</pre></div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  LOCAL DEV                              -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="local">Local development</h2>
+  <p>Tasks run as regular functions in-process during local development — no Render infrastructure required. See the <a href="https://render.com/docs/workflows-local-development">local development guide</a> for setup.</p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  GUIDES                                 -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="guides">Guides</h2>
+  <p>End-to-end walkthroughs for common Workflows patterns. Each guide includes architecture diagrams, production-ready code in TypeScript and Python, and design decision rationale.</p>
+
+  <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:20px 0 28px;">
+
+    <a href="#guide-video" style="text-decoration:none; display:grid; grid-template-columns:56px 1fr; gap:18px; align-items:start; background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; transition:border-color .15s;" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="width:56px;height:56px;border-radius:12px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:26px;">&#x1F3AC;</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Video &amp; large file processing</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:8px;">Fan out media processing across parallel instances — resize images, transcode video, or extract text from PDFs — with per-task compute sizing and automatic retries.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--green-soft);color:var(--green);">Fan-out pattern</span>
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">FFmpeg</span>
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">S3 upload</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#guide-etl" style="text-decoration:none; display:grid; grid-template-columns:56px 1fr; gap:18px; align-items:start; background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; transition:border-color .15s;" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="width:56px;height:56px;border-radius:12px;background:var(--orange-soft);display:flex;align-items:center;justify-content:center;font-size:26px;">&#x1F504;</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">ETL pipeline</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:8px;">Extract data from a paginated API, transform each batch in parallel across dedicated instances, and load results into Postgres over Render's private network.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--orange-soft);color:var(--orange);">Extract → Transform → Load</span>
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">Postgres</span>
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">Cron scheduling</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#guide-ai" style="text-decoration:none; display:grid; grid-template-columns:56px 1fr; gap:18px; align-items:start; background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; transition:border-color .15s;" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="width:56px;height:56px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:26px;">&#x1F916;</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">AI agent with tool calling</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:8px;">Build an agent that reasons with an LLM, dispatches tool calls as chained tasks (search, database queries, code execution), and loops until it reaches a final answer.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent);">Agent loop</span>
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">Tool calling</span>
+          <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">LLM + GPT-4o</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);">More examples: <a href="https://github.com/render-examples/render-workflows-examples-ts">TypeScript repo</a> · <a href="https://github.com/render-examples/render-workflows-examples-python">Python repo</a></p>
+
+  <h3 style="margin-top:36px;">Migration guides</h3>
+  <p>Coming from another task orchestration system? These guides map concepts 1:1 with side-by-side code examples.</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0 28px;">
+
+    <a href="#migrate-celery" style="text-decoration:none; background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:20px; transition:border-color .15s;" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">Migrate from Celery</div>
+      <div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;">Replace your Redis broker, Celery workers, and Beat scheduler. Same <code>@app.task</code> decorator pattern.</div>
+      <div style="display:flex;gap:6px;">
+        <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--orange-soft);color:var(--orange);">Python</span>
+        <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">Side-by-side code</span>
+      </div>
+    </a>
+
+    <a href="#migrate-temporal" style="text-decoration:none; background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:20px; transition:border-color .15s;" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">Migrate from Temporal</div>
+      <div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;">Drop the server cluster, worker fleet, and determinism constraints. Activities become tasks.</div>
+      <div style="display:flex;gap:6px;">
+        <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--blue-soft);color:var(--blue);">TypeScript &amp; Python</span>
+        <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:var(--bg-code);color:var(--text-dim);">Side-by-side code</span>
+      </div>
+    </a>
+
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  SDK REFERENCE                          -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="sdk-ref">SDK reference</h2>
+  <p>Full API surface documentation for defining tasks, triggering runs, listing/inspecting/cancelling runs, and streaming events.</p>
+
+  <div class="ba-grid">
+    <div class="ba-card after" style="border-style:solid;">
+      <div class="ba-tag" style="background:var(--accent-soft);color:var(--accent);">TypeScript</div>
+      <p style="font-size:13px;color:var(--text-muted);margin:0 0 10px;"><code>@renderinc/sdk</code> v0.5.0+</p>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>task()</code> — register a function as a workflow task</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>Render</code> class — trigger and manage runs</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>startTask()</code> / <code>runTask()</code> — fire-and-forget or wait</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>listTaskRuns()</code> / <code>getTaskRun()</code> / <code>cancelTaskRun()</code></li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>taskRunEvents()</code> — SSE streaming</li>
+      </ul>
+      <p style="margin:12px 0 0;"><a href="https://render.com/docs/workflows-sdk-typescript">Full TypeScript SDK reference →</a></p>
+    </div>
+    <div class="ba-card after" style="border-style:solid;">
+      <div class="ba-tag" style="background:var(--blue-soft);color:var(--blue);">Python</div>
+      <p style="font-size:13px;color:var(--text-muted);margin:0 0 10px;"><code>render_sdk</code> v0.6.0+</p>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>@app.task</code> decorator — register a function as a task</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>Workflows</code> class + <code>app.start()</code> — entrypoint</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>Render</code> / <code>RenderAsync</code> — sync and async clients</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>run_task()</code> / <code>start_task()</code> — trigger runs</li>
+        <li style="padding:3px 0 3px 18px;font-size:13px;color:var(--text-muted);"><code>list_task_runs()</code> / <code>get_task_run()</code></li>
+      </ul>
+      <p style="margin:12px 0 0;"><a href="https://render.com/docs/workflows-sdk-python">Full Python SDK reference →</a></p>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  PRICING                                -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="pricing">Pricing</h2>
+  <p>You pay for <strong>compute time</strong> (per-second, per instance type) and optionally for <strong>added concurrency</strong>. No charges when runs aren't executing.</p>
+
+  <div class="callout blue">
+    <strong>Example:</strong> A <code>standard</code> task that runs for 30 seconds costs $0.20 × (30/3600) = <strong>$0.0017</strong>. Running 10,000 of those per month costs ~<strong>$17</strong>.
+  </div>
+
+  <p>Full details: <a href="https://render.com/docs/workflows-limits">Limits &amp; Pricing</a></p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  CHOOSER                                -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="chooser">Workflows vs. other Render services</h2>
+
+  <table class="tbl">
+    <thead><tr><th></th><th>Workflow</th><th>Background Worker</th><th>Cron Job</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Best for</strong></td><td>Multi-step jobs, fan-out, AI agents</td><td>Long-lived consumers, WebSocket servers</td><td>Scheduled recurring jobs</td></tr>
+      <tr><td><strong>Instance model</strong></td><td>Ephemeral, one per run</td><td>Always-on</td><td>Runs on schedule</td></tr>
+      <tr><td><strong>Retries</strong></td><td>Built-in, per-task config</td><td>You implement</td><td>None</td></tr>
+      <tr><td><strong>Chaining</strong></td><td>Native</td><td>Via queues</td><td>Not applicable</td></tr>
+      <tr><td><strong>Per-task sizing</strong></td><td>Yes</td><td>One instance type</td><td>One instance type</td></tr>
+      <tr><td><strong>Billing</strong></td><td>Per-second of execution</td><td>Always-on instance</td><td>Per-minute</td></tr>
+    </tbody>
+  </table>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  LIMITS                                 -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="limits">Current beta limitations</h2>
+  <p>These are known limitations that will be addressed post-beta:</p>
+  <div style="margin: 12px 0 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.7;">
+    TypeScript and Python SDKs only (more planned) · No built-in scheduled triggers (use a <a href="https://render.com/docs/cronjobs">cron job</a> as a workaround) · Network-isolated environment runs can't reach other services in that environment over private network · No HIPAA-compliant host support yet.
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  GUIDE: VIDEO & LARGE FILE PROCESSING                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <div class="guide-divider" id="guide-video"><span class="gd-label">Guide</span></div>
+
+  <h2 style="border:none;padding-top:0;margin-top:0;">Processing video &amp; large files</h2>
+  <p class="lead" style="margin-bottom:24px;">Fan out media processing across parallel instances — resize images, transcode video, or extract text from PDFs — with per-task compute sizing and automatic retries.</p>
+
+  <h3>What you'll build</h3>
+  <p>A workflow that accepts a list of file URLs, fans out processing to parallel instances, and returns the results. The pattern works for any kind of file — we'll use video transcoding as the example.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs><pattern id="dv" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".5" fill="#26262e"/></pattern><marker id="av" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#60a5fa"/></marker><marker id="agv" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#34d399"/></marker></defs>
+      <rect width="620" height="130" fill="url(#dv)" rx="8"/>
+      <rect x="10" y="38" width="110" height="50" rx="8" fill="#18181d" stroke="#34d399" stroke-width="1.5"/>
+      <text x="65" y="59" text-anchor="middle" fill="#34d399" font-family="JetBrains Mono" font-size="10" font-weight="600">processUpload</text>
+      <text x="65" y="76" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">starter · orchestrator</text>
+      <line x1="120" y1="52" x2="160" y2="26" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#av)"/>
+      <line x1="120" y1="63" x2="160" y2="63" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#av)"/>
+      <line x1="120" y1="74" x2="160" y2="100" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#av)"/>
+      <rect x="165" y="6" width="115" height="38" rx="6" fill="#18181d" stroke="#60a5fa"/><text x="222" y="29" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">transcodeVideo</text>
+      <rect x="165" y="48" width="115" height="38" rx="6" fill="#18181d" stroke="#60a5fa"/><text x="222" y="71" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">transcodeVideo</text>
+      <rect x="165" y="90" width="115" height="38" rx="6" fill="#18181d" stroke="#60a5fa"/><text x="222" y="113" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">transcodeVideo</text>
+      <line x1="280" y1="25" x2="310" y2="55" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/><line x1="280" y1="67" x2="310" y2="55" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/><line x1="280" y1="109" x2="310" y2="55" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3"/>
+      <rect x="315" y="38" width="76" height="36" rx="6" fill="#18181d" stroke="#34d399" stroke-dasharray="3 3"/><text x="353" y="60" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="10" font-weight="600">Results</text>
+      <line x1="391" y1="56" x2="420" y2="56" stroke="#34d399" stroke-width="1.3" marker-end="url(#agv)"/>
+      <rect x="425" y="38" width="85" height="36" rx="6" fill="#18181d" stroke="#3a3a46"/><text x="467" y="53" text-anchor="middle" fill="#dfdfe5" font-family="DM Sans" font-size="10" font-weight="500">S3 / R2</text><text x="467" y="66" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="8">Upload output</text>
+    </svg>
+    <p class="diagram-cap">Parent fans out to N parallel instances, each processing one file. Results aggregated and uploaded.</p>
+  </div>
+
+  <h3>Task 1: Transcode a single video</h3>
+  <p>Runs on a <code>pro</code> instance (2 CPU, 4 GB). Downloads the source, transcodes with FFmpeg, uploads the result.</p>
+
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button><button class="code-btn">Python</button></div>
+  <div class="code-pane on"><pre><span class="k">import</span> { task } <span class="k">from</span> <span class="s">'@renderinc/sdk/workflows'</span>
+<span class="k">import</span> { execSync } <span class="k">from</span> <span class="s">'child_process'</span>
+<span class="k">import</span> { uploadToS3, downloadFile } <span class="k">from</span> <span class="s">'./storage'</span>
+
+<span class="k">export const</span> transcodeVideo = <span class="f">task</span>(
+  {
+    <span class="t">name</span>: <span class="s">'transcodeVideo'</span>,
+    <span class="t">plan</span>: <span class="s">'pro'</span>,              <span class="c">// 2 CPU, 4 GB — enough for 1080p</span>
+    <span class="t">timeoutSeconds</span>: <span class="n">3600</span>,
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">2</span>, <span class="t">waitDurationMs</span>: <span class="n">5000</span>, <span class="t">backoffScaling</span>: <span class="n">2</span> },
+  },
+  <span class="k">async function</span> <span class="f">transcodeVideo</span>(sourceUrl: <span class="t">string</span>, outputFormat = <span class="s">'mp4'</span>) {
+    <span class="k">const</span> inputPath = <span class="k">await</span> <span class="f">downloadFile</span>(sourceUrl, <span class="s">'/tmp/input'</span>)
+    <span class="k">const</span> outputPath = <span class="s">`/tmp/output.</span>${outputFormat}<span class="s">`</span>
+    <span class="k">const</span> start = Date.<span class="f">now</span>()
+    <span class="f">execSync</span>(<span class="s">`ffmpeg -i </span>${inputPath}<span class="s"> -c:v libx264 -preset fast -crf 23 </span>${outputPath}<span class="s">`</span>)
+    <span class="k">const</span> outputUrl = <span class="k">await</span> <span class="f">uploadToS3</span>(outputPath)
+    <span class="k">return</span> { outputUrl, durationMs: Date.<span class="f">now</span>() - start }
+  }
+)</pre></div>
+  <div class="code-pane"><pre><span class="k">import</span> subprocess, time
+<span class="k">from</span> render_sdk <span class="k">import</span> Workflows
+<span class="k">from</span> storage <span class="k">import</span> download_file, upload_to_s3
+
+app = <span class="f">Workflows</span>()
+
+<span class="d">@app.task</span>(plan=<span class="s">"pro"</span>, timeout_seconds=<span class="n">3600</span>,
+    retry={<span class="s">"max_retries"</span>: <span class="n">2</span>, <span class="s">"wait_duration_ms"</span>: <span class="n">5000</span>, <span class="s">"backoff_scaling"</span>: <span class="n">2</span>})
+<span class="k">async def</span> <span class="f">transcode_video</span>(source_url: <span class="t">str</span>, output_format: <span class="t">str</span> = <span class="s">"mp4"</span>) -> <span class="t">dict</span>:
+    input_path = <span class="k">await</span> <span class="f">download_file</span>(source_url, <span class="s">"/tmp/input"</span>)
+    output_path = <span class="s">f"/tmp/output.</span>{output_format}<span class="s">"</span>
+    start = time.<span class="f">time</span>()
+    subprocess.<span class="f">run</span>([<span class="s">"ffmpeg"</span>, <span class="s">"-i"</span>, input_path, <span class="s">"-c:v"</span>, <span class="s">"libx264"</span>,
+        <span class="s">"-preset"</span>, <span class="s">"fast"</span>, <span class="s">"-crf"</span>, <span class="s">"23"</span>, output_path], check=<span class="n">True</span>)
+    url = <span class="k">await</span> <span class="f">upload_to_s3</span>(output_path)
+    <span class="k">return</span> {<span class="s">"output_url"</span>: url, <span class="s">"duration_ms"</span>: <span class="f">int</span>((time.<span class="f">time</span>() - start) * <span class="n">1000</span>)}</pre></div></div>
+
+  <h3>Task 2: Orchestrator — fan out a batch</h3>
+
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button><button class="code-btn">Python</button></div>
+  <div class="code-pane on"><pre><span class="k">export const</span> processUpload = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'processUpload'</span>, <span class="t">plan</span>: <span class="s">'starter'</span>, <span class="t">timeoutSeconds</span>: <span class="n">7200</span> },
+  <span class="k">async function</span> <span class="f">processUpload</span>(videoUrls: <span class="t">string</span>[], format = <span class="s">'mp4'</span>) {
+    <span class="k">const</span> results = <span class="k">await</span> Promise.<span class="f">all</span>(
+      videoUrls.<span class="f">map</span>(url => <span class="f">transcodeVideo</span>(url, format))
+    )
+    <span class="k">return</span> results
+  }
+)</pre></div>
+  <div class="code-pane"><pre><span class="d">@app.task</span>(plan=<span class="s">"starter"</span>, timeout_seconds=<span class="n">7200</span>)
+<span class="k">async def</span> <span class="f">process_upload</span>(video_urls: <span class="t">list</span>[<span class="t">str</span>], format: <span class="t">str</span> = <span class="s">"mp4"</span>) -> <span class="t">list</span>:
+    results = <span class="k">await</span> asyncio.<span class="f">gather</span>(
+        *[<span class="f">transcode_video</span>(url, format) <span class="k">for</span> url <span class="k">in</span> video_urls]
+    )
+    <span class="k">return</span> <span class="f">list</span>(results)</pre></div></div>
+
+  <div class="callout green"><strong>Cost insight:</strong> The orchestrator runs on a $0.05/hr <code>starter</code> instance while the heavy work runs on $0.40/hr <code>pro</code> instances — you only pay for the compute you actually need at each stage.</div>
+
+  <h3>Adapting the pattern</h3>
+  <p><strong>Image resizing:</strong> Replace FFmpeg with Sharp or Pillow. Use <code>standard</code> instances. <strong>PDF extraction:</strong> Use pdftotext or Tika. Increase <code>timeoutSeconds</code> for scanned docs. <strong>Audio transcription:</strong> Call Whisper API or run whisper.cpp on <code>pro_plus</code>.</p>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  GUIDE: ETL PIPELINE                                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <div class="guide-divider" id="guide-etl"><span class="gd-label">Guide</span></div>
+
+  <h2 style="border:none;padding-top:0;margin-top:0;">Building an ETL pipeline</h2>
+  <p class="lead" style="margin-bottom:24px;">Extract data from an API, transform each batch in parallel, and load results into Postgres — with per-stage compute sizing and isolated failure recovery.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 640 110" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs><pattern id="de" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".5" fill="#26262e"/></pattern><marker id="ae" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#7c6aff"/></marker></defs>
+      <rect width="640" height="110" fill="url(#de)" rx="8"/>
+      <text x="78" y="18" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing=".08em">EXTRACT</text>
+      <text x="278" y="18" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing=".08em">TRANSFORM</text>
+      <text x="500" y="18" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing=".08em">LOAD</text>
+      <rect x="18" y="28" width="120" height="55" rx="8" fill="#18181d" stroke="#34d399" stroke-width="1.5"/><text x="78" y="50" text-anchor="middle" fill="#34d399" font-family="JetBrains Mono" font-size="10" font-weight="600">extractRecords</text><text x="78" y="70" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8.5">starter · 0.5 CPU</text>
+      <line x1="138" y1="56" x2="168" y2="38" stroke="#7c6aff" stroke-width="1.3" marker-end="url(#ae)"/><line x1="138" y1="56" x2="168" y2="56" stroke="#7c6aff" stroke-width="1.3" marker-end="url(#ae)"/><line x1="138" y1="56" x2="168" y2="74" stroke="#7c6aff" stroke-width="1.3" marker-end="url(#ae)"/>
+      <rect x="173" y="24" width="120" height="28" rx="6" fill="#18181d" stroke="#60a5fa"/><text x="233" y="42" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5">transformBatch</text>
+      <rect x="173" y="56" width="120" height="28" rx="6" fill="#18181d" stroke="#60a5fa"/><text x="233" y="74" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5">transformBatch</text>
+      <rect x="173" y="88" width="120" height="28" rx="6" fill="#18181d" stroke="#60a5fa"/><text x="233" y="106" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5">transformBatch</text>
+      <line x1="360" y1="56" x2="390" y2="56" stroke="#7c6aff" stroke-width="1.3" marker-end="url(#ae)"/>
+      <rect x="395" y="28" width="120" height="55" rx="8" fill="#18181d" stroke="#f59e0b"/><text x="455" y="50" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono" font-size="10" font-weight="600">loadToPostgres</text><text x="455" y="70" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8.5">standard · 1 CPU</text>
+      <line x1="515" y1="56" x2="545" y2="56" stroke="#3a3a46" stroke-width="1" stroke-dasharray="3 3"/>
+      <rect x="550" y="34" width="76" height="44" rx="8" fill="#18181d" stroke="#3a3a46"/><text x="588" y="53" text-anchor="middle" fill="#dfdfe5" font-family="DM Sans" font-size="10" font-weight="500">Postgres</text><text x="588" y="67" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="8">Private net</text>
+    </svg>
+    <p class="diagram-cap">Extract → fan-out Transform in parallel → Load into Postgres over private network.</p>
+  </div>
+
+  <h3>The pipeline orchestrator</h3>
+
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+  <div class="code-pane on"><pre><span class="k">export const</span> runPipeline = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'runPipeline'</span>, <span class="t">plan</span>: <span class="s">'starter'</span>, <span class="t">timeoutSeconds</span>: <span class="n">7200</span> },
+  <span class="k">async function</span> <span class="f">runPipeline</span>(apiEndpoint: <span class="t">string</span>) {
+
+    <span class="c">// 1. Extract: fetch all pages from API (serial — needs cursor)</span>
+    <span class="k">const</span> batches = <span class="k">await</span> <span class="f">extractRecords</span>(apiEndpoint)
+
+    <span class="c">// 2. Transform: enrich each batch in parallel</span>
+    <span class="k">const</span> enriched = <span class="k">await</span> Promise.<span class="f">all</span>(
+      batches.<span class="f">map</span>(batch => <span class="f">transformBatch</span>(batch))
+    )
+
+    <span class="c">// 3. Load: bulk insert all records into Postgres</span>
+    <span class="k">const</span> allRecords = enriched.<span class="f">flat</span>()
+    <span class="k">const</span> { inserted } = <span class="k">await</span> <span class="f">loadToPostgres</span>(allRecords)
+
+    <span class="k">return</span> { total: inserted }
+  }
+)</pre></div></div>
+
+  <h3>Extract task — paginated API fetch</h3>
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+  <div class="code-pane on"><pre><span class="k">export const</span> extractRecords = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'extractRecords'</span>, <span class="t">plan</span>: <span class="s">'starter'</span>, <span class="t">timeoutSeconds</span>: <span class="n">1800</span>,
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">3</span>, <span class="t">waitDurationMs</span>: <span class="n">2000</span> } },
+  <span class="k">async function</span> <span class="f">extractRecords</span>(apiEndpoint: <span class="t">string</span>, batchSize = <span class="n">100</span>) {
+    <span class="k">const</span> batches: <span class="t">Record</span>[][] = []
+    <span class="k">let</span> cursor: <span class="t">string</span> | <span class="t">undefined</span>
+    <span class="k">do</span> {
+      <span class="k">const</span> url = <span class="s">`</span>${apiEndpoint}<span class="s">?limit=</span>${batchSize}${cursor ? <span class="s">`&cursor=</span>${cursor}<span class="s">`</span> : <span class="s">''</span>}<span class="s">`</span>
+      <span class="k">const</span> res = <span class="k">await</span> <span class="f">fetch</span>(url)
+      <span class="k">if</span> (!res.ok) <span class="k">throw new</span> Error(<span class="s">`API </span>${res.status}<span class="s">`</span>)
+      <span class="k">const</span> data = <span class="k">await</span> res.<span class="f">json</span>()
+      batches.<span class="f">push</span>(data.records)
+      cursor = data.nextCursor
+    } <span class="k">while</span> (cursor)
+    <span class="k">return</span> batches
+  }
+)</pre></div></div>
+
+  <h3>Load task — bulk insert over private network</h3>
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+  <div class="code-pane on"><pre><span class="k">import</span> { Pool } <span class="k">from</span> <span class="s">'pg'</span>
+<span class="k">const</span> pool = <span class="k">new</span> <span class="f">Pool</span>({ connectionString: process.env.DATABASE_URL })
+
+<span class="k">export const</span> loadToPostgres = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'loadToPostgres'</span>, <span class="t">plan</span>: <span class="s">'standard'</span>, <span class="t">timeoutSeconds</span>: <span class="n">900</span>,
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">3</span> } },
+  <span class="k">async function</span> <span class="f">loadToPostgres</span>(records: <span class="t">EnrichedRecord</span>[]) {
+    <span class="k">const</span> client = <span class="k">await</span> pool.<span class="f">connect</span>()
+    <span class="k">try</span> {
+      <span class="k">await</span> client.<span class="f">query</span>(<span class="s">'BEGIN'</span>)
+      <span class="k">for</span> (<span class="k">const</span> r <span class="k">of</span> records) {
+        <span class="k">await</span> client.<span class="f">query</span>(
+          <span class="s">`INSERT INTO leads (email, region, score) VALUES ($1, $2, $3)
+           ON CONFLICT (email) DO UPDATE SET score = $3`</span>,
+          [r.email, r.region, r.score]
+        )
+      }
+      <span class="k">await</span> client.<span class="f">query</span>(<span class="s">'COMMIT'</span>)
+      <span class="k">return</span> { inserted: records.length }
+    } <span class="k">catch</span> (e) { <span class="k">await</span> client.<span class="f">query</span>(<span class="s">'ROLLBACK'</span>); <span class="k">throw</span> e }
+    <span class="k">finally</span> { client.<span class="f">release</span>() }
+  }
+)</pre></div></div>
+
+  <div class="callout blue"><strong>Scheduling:</strong> Run this pipeline on a schedule by creating a <a href="https://render.com/docs/cronjobs">Render cron job</a> that calls <code>render.workflows.startTask('my-workflow/runPipeline', [...])</code>.</div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  GUIDE: AI AGENT WORKFLOW                               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <div class="guide-divider" id="guide-ai"><span class="gd-label">Guide</span></div>
+
+  <h2 style="border:none;padding-top:0;margin-top:0;">AI agent with tool calling</h2>
+  <p class="lead" style="margin-bottom:24px;">Build an agent that reasons with an LLM, dispatches tool calls as chained tasks, and loops until it reaches a final answer — with each tool running in its own isolated instance.</p>
+
+  <h3>Why Workflows for AI agents</h3>
+  <p><strong>Tool calls fail independently.</strong> A web search might time out while the LLM call succeeds. Without task-level retries, you'd restart the entire agent loop for one flaky tool.</p>
+  <p><strong>Tools need different resources.</strong> An LLM orchestrator needs minimal compute. A code execution tool might need 4 GB of RAM. Workflows lets you right-size each tool.</p>
+  <p><strong>Agent loops can run for minutes.</strong> 5–10 tool calls with LLM reasoning between each is too long for a serverless function, too bursty for an always-on worker.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs><pattern id="da" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".5" fill="#26262e"/></pattern><marker id="aa" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#60a5fa"/></marker><marker id="ac" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#34d399"/></marker></defs>
+      <rect width="580" height="180" fill="url(#da)" rx="8"/>
+      <rect x="14" y="40" width="120" height="60" rx="8" fill="#18181d" stroke="#34d399" stroke-width="1.5"/>
+      <text x="74" y="63" text-anchor="middle" fill="#34d399" font-family="JetBrains Mono" font-size="10.5" font-weight="600">agentLoop</text>
+      <text x="74" y="80" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">LLM reasoning</text>
+      <text x="74" y="92" text-anchor="middle" fill="#56566a" font-family="JetBrains Mono" font-size="8">standard · 1 CPU</text>
+      <path d="M 14 100 Q -8 70, 14 40" stroke="#34d399" stroke-width="1" fill="none" stroke-dasharray="3 3" marker-end="url(#ac)"/>
+      <text x="0" y="72" fill="#34d399" font-family="DM Sans" font-size="8" transform="rotate(-90, 0, 72)">loop</text>
+      <line x1="134" y1="52" x2="180" y2="28" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#aa)"/><line x1="134" y1="65" x2="180" y2="65" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#aa)"/><line x1="134" y1="78" x2="180" y2="102" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#aa)"/><line x1="134" y1="88" x2="180" y2="138" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#aa)"/>
+      <rect x="185" y="10" width="110" height="34" rx="7" fill="#18181d" stroke="#60a5fa"/><text x="240" y="31" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">webSearch</text>
+      <rect x="185" y="50" width="110" height="34" rx="7" fill="#18181d" stroke="#60a5fa"/><text x="240" y="71" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">queryDatabase</text>
+      <rect x="185" y="90" width="110" height="34" rx="7" fill="#18181d" stroke="#22d3ee"/><text x="240" y="111" text-anchor="middle" fill="#22d3ee" font-family="JetBrains Mono" font-size="9.5" font-weight="500">runCode</text>
+      <rect x="185" y="130" width="110" height="34" rx="7" fill="#18181d" stroke="#60a5fa"/><text x="240" y="151" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono" font-size="9.5" font-weight="500">scrapeUrl</text>
+      <rect x="340" y="14" width="90" height="148" rx="8" fill="#18181d" stroke="#3a3a46"/><text x="385" y="78" text-anchor="middle" fill="#8b8b9e" font-family="DM Sans" font-size="10" font-weight="600">Context</text><text x="385" y="96" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">accumulates</text>
+      <line x1="430" y1="88" x2="460" y2="88" stroke="#34d399" stroke-width="1.3" marker-end="url(#ac)"/>
+      <rect x="465" y="66" width="100" height="44" rx="8" fill="#18181d" stroke="#34d399" stroke-dasharray="4 3"/><text x="515" y="85" text-anchor="middle" fill="#34d399" font-family="DM Sans" font-size="11" font-weight="700">Final Answer</text><text x="515" y="101" text-anchor="middle" fill="#56566a" font-family="DM Sans" font-size="9">JSON result</text>
+    </svg>
+    <p class="diagram-cap">Agent loop calls LLM, dispatches tool tasks, accumulates context, repeats until answer.</p>
+  </div>
+
+  <h3>Tool tasks</h3>
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+  <div class="code-pane on"><pre><span class="k">import</span> { task } <span class="k">from</span> <span class="s">'@renderinc/sdk/workflows'</span>
+
+<span class="k">export const</span> webSearch = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'webSearch'</span>, <span class="t">plan</span>: <span class="s">'starter'</span>, <span class="t">timeoutSeconds</span>: <span class="n">60</span>,
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">3</span>, <span class="t">waitDurationMs</span>: <span class="n">1000</span> } },
+  <span class="k">async function</span> <span class="f">webSearch</span>(query: <span class="t">string</span>): Promise&lt;<span class="t">string</span>&gt; {
+    <span class="k">const</span> res = <span class="k">await</span> <span class="f">fetch</span>(<span class="s">`https://api.search.com/v1?q=</span>${<span class="f">encodeURIComponent</span>(query)}<span class="s">`</span>)
+    <span class="k">if</span> (!res.ok) <span class="k">throw new</span> Error(<span class="s">`Search API </span>${res.status}<span class="s">`</span>)
+    <span class="k">return</span> (<span class="k">await</span> res.<span class="f">json</span>()).results.<span class="f">map</span>((r: <span class="t">any</span>) => r.snippet).<span class="f">join</span>(<span class="s">'\n'</span>)
+  }
+)
+
+<span class="k">export const</span> runCode = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'runCode'</span>, <span class="t">plan</span>: <span class="s">'pro'</span>, <span class="t">timeoutSeconds</span>: <span class="n">120</span>,  <span class="c">// 2 CPU for compute</span>
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">1</span> } },
+  <span class="k">async function</span> <span class="f">runCode</span>(code: <span class="t">string</span>, language: <span class="t">string</span>): Promise&lt;<span class="t">string</span>&gt; {
+    <span class="k">const</span> { stdout } = <span class="f">execSync</span>(<span class="s">`echo '</span>${code}<span class="s">' | </span>${language}<span class="s">`</span>, { timeout: <span class="n">30000</span>, encoding: <span class="s">'utf-8'</span> })
+    <span class="k">return</span> stdout
+  }
+)</pre></div></div>
+
+  <h3>Agent loop</h3>
+  <div class="code-wrap"><div class="code-bar"><button class="code-btn on">TypeScript</button></div>
+  <div class="code-pane on"><pre><span class="k">import</span> { webSearch, queryDatabase, runCode } <span class="k">from</span> <span class="s">'./tools'</span>
+<span class="k">const</span> TOOLS = { webSearch, queryDatabase, runCode } <span class="k">as const</span>
+
+<span class="k">export const</span> agentLoop = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'agentLoop'</span>, <span class="t">plan</span>: <span class="s">'standard'</span>, <span class="t">timeoutSeconds</span>: <span class="n">600</span>,
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">1</span> } },
+  <span class="k">async function</span> <span class="f">agentLoop</span>(userPrompt: <span class="t">string</span>, maxIterations = <span class="n">8</span>) {
+    <span class="k">const</span> messages: <span class="t">Message</span>[] = [{ role: <span class="s">'user'</span>, content: userPrompt }]
+    <span class="k">let</span> toolCalls = <span class="n">0</span>
+
+    <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i < maxIterations; i++) {
+      <span class="k">const</span> llmResponse = <span class="k">await</span> <span class="f">callLLM</span>({ model: <span class="s">'gpt-4o'</span>, messages, tools: [...] })
+
+      <span class="k">if</span> (llmResponse.type === <span class="s">'answer'</span>)
+        <span class="k">return</span> { answer: llmResponse.content, toolCalls }
+
+      <span class="c">// Dispatch tool — runs in a SEPARATE instance with its own retry</span>
+      <span class="k">const</span> { toolName, args } = llmResponse.toolCall
+      <span class="k">const</span> toolResult = <span class="k">await</span> TOOLS[toolName](...Object.<span class="f">values</span>(args))
+      toolCalls++
+
+      messages.<span class="f">push</span>(
+        { role: <span class="s">'assistant'</span>, content: <span class="s">`Calling </span>${toolName}<span class="s">`</span> },
+        { role: <span class="s">'tool'</span>, content: toolResult }
+      )
+    }
+    <span class="k">return</span> { answer: <span class="s">'Max iterations reached'</span>, toolCalls }
+  }
+)</pre></div></div>
+
+  <div class="callout orange"><strong>Key design:</strong> Each <code>await TOOLS[toolName](...)</code> triggers a chained run in a <em>separate instance</em>. The agent's conversation state stays in the parent. If <code>webSearch</code> fails and retries, the parent's messages array is untouched.</div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  MIGRATION: CELERY                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <div class="guide-divider" id="migrate-celery"><span class="gd-label">Migration Guide</span></div>
+
+  <h2 style="border:none;padding-top:0;margin-top:0;">Migrate from Celery</h2>
+  <p class="lead" style="margin-bottom:24px;">Replace your Celery workers, Redis broker, and Beat scheduler with Render Workflows — same task-based mental model, zero infrastructure to manage.</p>
+
+  <h3>Concept mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Celery</th><th>Render Workflows</th></tr></thead>
+    <tbody>
+      <tr><td><code>@app.task</code> decorator</td><td><code>@app.task</code> decorator (same pattern)</td></tr>
+      <tr><td>Redis / RabbitMQ broker</td><td>Built-in queue (managed by Render)</td></tr>
+      <tr><td>Celery workers</td><td>Auto-provisioned instances per run</td></tr>
+      <tr><td><code>.delay()</code> / <code>.apply_async()</code></td><td><code>start_task()</code> / <code>run_task()</code></td></tr>
+      <tr><td><code>AsyncResult.get()</code></td><td><code>await started_run</code></td></tr>
+      <tr><td><code>group()</code> / <code>chord()</code></td><td><code>asyncio.gather()</code> with chained tasks</td></tr>
+      <tr><td><code>autoretry_for</code> / <code>max_retries</code></td><td><code>retry</code> config with <code>max_retries</code>, <code>wait_duration_ms</code>, <code>backoff_scaling</code></td></tr>
+      <tr><td>Celery Beat</td><td><a href="https://render.com/docs/cronjobs">Render cron job</a></td></tr>
+      <tr><td>Flower monitoring</td><td>Render Dashboard</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Defining a task</h3>
+  <div class="side">
+    <div class="side-card"><div class="side-label old">Celery</div><div class="side-body"><pre><span class="k">from</span> celery <span class="k">import</span> Celery
+
+app = <span class="f">Celery</span>(<span class="s">'tasks'</span>,
+    broker=<span class="s">'redis://localhost:6379'</span>,
+    backend=<span class="s">'redis://localhost:6379'</span>)
+
+<span class="d">@app.task</span>(
+    autoretry_for=(<span class="t">Exception</span>,),
+    max_retries=<span class="n">3</span>,
+    retry_backoff=<span class="n">True</span>,
+    soft_time_limit=<span class="n">300</span>,
+)
+<span class="k">def</span> <span class="f">process_document</span>(url):
+    raw = <span class="f">requests.get</span>(url)
+    <span class="k">return</span> <span class="f">parse</span>(raw.text)</pre></div></div>
+    <div class="side-card"><div class="side-label new">Render Workflows</div><div class="side-body"><pre><span class="k">from</span> render_sdk <span class="k">import</span> Workflows
+
+app = <span class="f">Workflows</span>()
+<span class="c"># No broker config needed</span>
+
+<span class="d">@app.task</span>(
+    timeout_seconds=<span class="n">300</span>,
+    retry={
+        <span class="s">"max_retries"</span>: <span class="n">3</span>,
+        <span class="s">"wait_duration_ms"</span>: <span class="n">1000</span>,
+        <span class="s">"backoff_scaling"</span>: <span class="n">2</span>,
+    },
+)
+<span class="k">async def</span> <span class="f">process_document</span>(url: <span class="t">str</span>):
+    raw = <span class="k">await</span> <span class="f">httpx.get</span>(url)
+    <span class="k">return</span> <span class="f">parse</span>(raw.text)</pre></div></div>
+  </div>
+
+  <h3>Fan-out</h3>
+  <div class="side">
+    <div class="side-card"><div class="side-label old">Celery</div><div class="side-body"><pre><span class="k">from</span> celery <span class="k">import</span> group
+
+job = <span class="f">group</span>(
+    process_document.<span class="f">s</span>(url)
+    <span class="k">for</span> url <span class="k">in</span> urls
+)
+result = job.<span class="f">apply_async</span>()
+outputs = result.<span class="f">get</span>()</pre></div></div>
+    <div class="side-card"><div class="side-label new">Render Workflows</div><div class="side-body"><pre><span class="d">@app.task</span>(plan=<span class="s">"starter"</span>)
+<span class="k">async def</span> <span class="f">process_batch</span>(urls):
+    results = <span class="k">await</span> asyncio.<span class="f">gather</span>(
+        *[<span class="f">process_document</span>(url)
+          <span class="k">for</span> url <span class="k">in</span> urls]
+    )
+    <span class="k">return</span> <span class="f">list</span>(results)</pre></div></div>
+  </div>
+
+  <h3>Periodic tasks</h3>
+  <div class="side">
+    <div class="side-card"><div class="side-label old">Celery Beat</div><div class="side-body"><pre>beat_schedule = {
+    <span class="s">'nightly-sync'</span>: {
+        <span class="s">'task'</span>: <span class="s">'tasks.sync_data'</span>,
+        <span class="s">'schedule'</span>: crontab(
+            hour=<span class="n">2</span>, minute=<span class="n">0</span>),
+    },
+}
+<span class="c"># celery -A tasks beat</span></pre></div></div>
+    <div class="side-card"><div class="side-label new">Render Cron Job</div><div class="side-body"><pre><span class="c"># Deploy as a Render cron job</span>
+<span class="c"># Schedule: 0 2 * * *</span>
+
+<span class="k">from</span> render_sdk <span class="k">import</span> Render
+render = <span class="f">Render</span>()
+render.workflows.<span class="f">run_task</span>(
+    <span class="s">"my-workflow/sync_data"</span>, []
+)
+<span class="c"># No Beat process to manage</span></pre></div></div>
+  </div>
+
+  <h3>What you gain</h3>
+  <p><strong>No broker to manage.</strong> No Redis/RabbitMQ provisioning. <strong>No workers to scale.</strong> Fresh instance per run. <strong>Per-task compute sizing.</strong> <code>starter</code> to <code>pro_ultra</code> per task. <strong>Per-second billing.</strong> No idle costs. <strong>Built-in Dashboard</strong> replaces Flower.</p>
+
+  <div class="callout orange"><strong>Watch out:</strong> No built-in scheduler (use cron jobs). Python SDK is async-first. Arguments must be JSON-serializable (no pickle). No queue-based task routing.</div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  MIGRATION: TEMPORAL                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <div class="guide-divider" id="migrate-temporal"><span class="gd-label">Migration Guide</span></div>
+
+  <h2 style="border:none;padding-top:0;margin-top:0;">Migrate from Temporal</h2>
+  <p class="lead" style="margin-bottom:24px;">Replace your Temporal server, worker hosts, and activity/workflow boilerplate — simpler orchestration for teams that don't need full durable execution semantics.</p>
+
+  <div class="callout green"><strong>Good fit if:</strong> Your workflows are mostly "call activity A, then B, fan-out C" without complex signals or long sleeps, and you want to eliminate the worker fleet and server infrastructure.</div>
+  <div class="callout orange"><strong>Stay on Temporal if:</strong> You depend on deterministic replay, <code>workflow.sleep()</code> for days/months, signals/queries to running workflows, or saga compensation patterns.</div>
+
+  <h3>Concept mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Temporal</th><th>Render Workflows</th></tr></thead>
+    <tbody>
+      <tr><td>Workflow function</td><td>Orchestrator task</td></tr>
+      <tr><td>Activity function</td><td>Task</td></tr>
+      <tr><td><code>executeActivity()</code></td><td>Call the task function directly</td></tr>
+      <tr><td>Task queue + Worker</td><td>Automatic — no configuration</td></tr>
+      <tr><td>Temporal Server / Cloud</td><td>Render's built-in orchestration</td></tr>
+      <tr><td><code>RetryPolicy</code></td><td><code>retry</code> config</td></tr>
+      <tr><td><code>Promise.all()</code> on activities</td><td><code>Promise.all()</code> on tasks (identical!)</td></tr>
+      <tr><td><code>workflow.sleep()</code></td><td>Not available — use cron jobs</td></tr>
+      <tr><td>Signals / Queries</td><td>Not available</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Activities → Tasks</h3>
+  <div class="side">
+    <div class="side-card"><div class="side-label old">Temporal</div><div class="side-body"><pre><span class="c">// activities.ts</span>
+<span class="k">export async function</span> <span class="f">sendEmail</span>(
+  to: <span class="t">string</span>, subject: <span class="t">string</span>,
+  body: <span class="t">string</span>
+) {
+  <span class="k">const</span> res = <span class="k">await</span> resend.<span class="f">send</span>({
+    to, subject, html: body
+  })
+  <span class="k">return</span> { id: res.id }
+}</pre></div></div>
+    <div class="side-card"><div class="side-label new">Render Workflows</div><div class="side-body"><pre><span class="c">// tasks.ts</span>
+<span class="k">export const</span> sendEmail = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'sendEmail'</span>,
+    <span class="t">plan</span>: <span class="s">'starter'</span>,
+    <span class="t">retry</span>: { <span class="t">maxRetries</span>: <span class="n">3</span> } },
+  <span class="k">async function</span> <span class="f">sendEmail</span>(
+    to: <span class="t">string</span>, subject: <span class="t">string</span>,
+    body: <span class="t">string</span>
+  ) {
+    <span class="k">const</span> res = <span class="k">await</span> resend.<span class="f">send</span>({
+      to, subject, html: body
+    })
+    <span class="k">return</span> { id: res.id }
+  }
+)</pre></div></div>
+  </div>
+
+  <h3>Workflow → Orchestrator task</h3>
+  <div class="side">
+    <div class="side-card"><div class="side-label old">Temporal</div><div class="side-body"><pre><span class="c">// workflows.ts</span>
+<span class="k">import</span> { proxyActivities }
+  <span class="k">from</span> <span class="s">'@temporalio/workflow'</span>
+
+<span class="k">const</span> { fetchUser, enrichData,
+  sendEmail } = <span class="f">proxyActivities</span>({
+    startToCloseTimeout: <span class="s">'5m'</span>,
+    retry: {
+      maximumAttempts: <span class="n">3</span>,
+      backoffCoefficient: <span class="n">2</span>,
+    },
+  })
+
+<span class="k">export async function</span>
+  <span class="f">onboardUser</span>(userId: <span class="t">string</span>) {
+  <span class="k">const</span> user = <span class="k">await</span> <span class="f">fetchUser</span>(userId)
+  <span class="k">const</span> data = <span class="k">await</span> <span class="f">enrichData</span>(user)
+  <span class="k">await</span> <span class="f">sendEmail</span>(user.email,
+    <span class="s">'Welcome!'</span>, data.html)
+  <span class="k">return</span> { ok: <span class="n">true</span> }
+}</pre></div></div>
+    <div class="side-card"><div class="side-label new">Render Workflows</div><div class="side-body"><pre><span class="c">// orchestrator.ts</span>
+<span class="k">import</span> { fetchUser, enrichData,
+  sendEmail } <span class="k">from</span> <span class="s">'./tasks'</span>
+<span class="c">// No proxy needed!</span>
+
+<span class="k">export const</span> onboardUser = <span class="f">task</span>(
+  { <span class="t">name</span>: <span class="s">'onboardUser'</span>,
+    <span class="t">plan</span>: <span class="s">'starter'</span>,
+    <span class="t">timeoutSeconds</span>: <span class="n">600</span> },
+  <span class="k">async function</span>
+    <span class="f">onboardUser</span>(userId: <span class="t">string</span>) {
+    <span class="k">const</span> user = <span class="k">await</span>
+      <span class="f">fetchUser</span>(userId)
+    <span class="k">const</span> data = <span class="k">await</span>
+      <span class="f">enrichData</span>(user)
+    <span class="k">await</span> <span class="f">sendEmail</span>(user.email,
+      <span class="s">'Welcome!'</span>, data.html)
+    <span class="k">return</span> { ok: <span class="n">true</span> }
+  }
+)</pre></div></div>
+  </div>
+
+  <h3>Worker setup</h3>
+  <div class="side">
+    <div class="side-card"><div class="side-label old">Temporal Worker</div><div class="side-body"><pre><span class="c">// worker.ts — you deploy this</span>
+<span class="k">const</span> worker = <span class="k">await</span> Worker.<span class="f">create</span>({
+  workflowsPath: <span class="s">'./workflows'</span>,
+  activities,
+  taskQueue: <span class="s">'onboarding'</span>,
+  connection: <span class="k">await</span>
+    NativeConnection.<span class="f">connect</span>({
+      address: <span class="s">'temporal:7233'</span>,
+    }),
+})
+<span class="k">await</span> worker.<span class="f">run</span>()</pre></div></div>
+    <div class="side-card"><div class="side-label new">Render Workflows</div><div class="side-body"><pre><span class="c">// Nothing to write or deploy.</span>
+<span class="c">//</span>
+<span class="c">// Render automatically:</span>
+<span class="c">//  • Registers tasks from your code</span>
+<span class="c">//  • Provisions instances per run</span>
+<span class="c">//  • Handles queuing + routing</span>
+<span class="c">//  • Deprovisions when done</span>
+<span class="c">//</span>
+<span class="c">// Just push your task files</span>
+<span class="c">// and deploy the workflow service.</span></pre></div></div>
+  </div>
+
+  <h3>What you gain</h3>
+  <p><strong>No server cluster.</strong> No Temporal Server or Cloud subscription. <strong>No worker fleet.</strong> No long-running processes to manage. <strong>No determinism constraints.</strong> Tasks are regular functions — call APIs, use <code>Date.now()</code>, anything goes. <strong>No proxy boilerplate.</strong> Import and call task functions directly. <strong>Per-task compute sizing.</strong> Each task gets its own instance type.</p>
+
+  <h3>What you lose</h3>
+  <table class="tbl">
+    <thead><tr><th>Temporal Feature</th><th>Render Status</th></tr></thead>
+    <tbody>
+      <tr><td>Deterministic replay / event sourcing</td><td>Not available</td></tr>
+      <tr><td><code>workflow.sleep('7 days')</code></td><td>Use cron job for delayed follow-up</td></tr>
+      <tr><td>Signals / Queries</td><td>Not available</td></tr>
+      <tr><td>Saga compensation</td><td>Implement in your task code</td></tr>
+      <tr><td>Continue-as-new</td><td>Not applicable</td></tr>
+      <tr><td>Child workflow cancellation scopes</td><td><code>cancelTaskRun()</code> — no cascading</td></tr>
+    </tbody>
+  </table>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  FOOTER                                                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <div style="margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--border);">
+    <h3 style="margin-top:0;">Ready to build?</h3>
+    <p><a href="https://render.com/docs/workflows-tutorial">Create your first workflow →</a></p>
+    <p style="color: var(--text-muted); font-size: 13px;">Feedback welcome at <a href="mailto:workflows-feedback@render.com">workflows-feedback@render.com</a></p>
+  </div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.code-wrap').forEach(w => {
+  const btns = w.querySelectorAll('.code-btn');
+  const panes = w.querySelectorAll('.code-pane');
+  btns.forEach((b, i) => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.remove('on'));
+    panes.forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    panes[i].classList.add('on');
+  }));
+});
+const secs = document.querySelectorAll('h2[id], main[id]');
+const links = document.querySelectorAll('.sidebar a');
+const observer = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) {
+    links.forEach(l => l.classList.remove('on'));
+    const t = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+    if (t) t.classList.add('on');
+  }
+}), { rootMargin: '-15% 0px -65% 0px' });
+secs.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
