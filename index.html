@@ -375,38 +375,42 @@
   <!--  WHAT IS WORKFLOWS                      -->
   <!-- ═══════════════════════════════════════ -->
 
-  <h2 id="what">What is Workflows</h2>
+  <h2 id="what">A fully managed durable task execution service</h2>
 
-  <p>Render Workflows is a <strong>managed task orchestration platform</strong>. You define functions as tasks using the Render SDK, and Render handles everything else — provisioning compute, queuing runs, retrying failures, and cleaning up when work is done.</p>
+  <p>Render Durable Workflows is a fully-managed service that combines a <strong>durable execution engine</strong> with a <strong>developer-friendly SDK</strong>. Define your workflows as code; Render manages the queueing, state, retries, and workers.</p>
 
-  <p>Without Workflows, running long-running or multi-step jobs means stitching together infrastructure that has nothing to do with your actual logic. Here's what that looks like:</p>
+  <table class="tbl">
+    <thead><tr><th>Component</th><th style="color:var(--red);">Traditional Solution</th><th style="color:var(--green);">On Render</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Queues</strong></td><td>SQS / Redis</td><td style="color:var(--green);">Included</td></tr>
+      <tr><td><strong>Workers</strong></td><td>EC2 / K8s + Lambda</td><td style="color:var(--green);">Included</td></tr>
+      <tr><td><strong>State Management</strong></td><td>Postgres / DynamoDB</td><td style="color:var(--green);">Included</td></tr>
+      <tr><td><strong>Orchestration</strong></td><td>Airflow / Temporal</td><td style="color:var(--green);">Included</td></tr>
+      <tr><td><strong>Monitoring</strong></td><td>DataDog + CloudWatch</td><td style="color:var(--green);">Included</td></tr>
+      <tr><td><strong>What's Left</strong></td><td>—</td><td style="color:var(--green);">Your Logic &#x2713;</td></tr>
+    </tbody>
+  </table>
 
-  <div class="ba-grid">
-    <div class="ba-card before">
-      <div class="ba-tag">Without Workflows</div>
-      <ul>
-        <li>Provision and manage a message queue (Redis, SQS, RabbitMQ)</li>
-        <li>Write queue consumers, polling loops, and dead-letter handling</li>
-        <li>Implement your own retry logic with backoff</li>
-        <li>Build a worker pool and manage concurrency limits</li>
-        <li>Stitch together monitoring across multiple services</li>
-        <li>Pay for always-on worker instances, even when idle</li>
-      </ul>
+  <h3>Core features</h3>
+
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>SDK-first workflow definition</h4>
+      <p>Abstract away infrastructure with a simple SDK. Go from code to a deployed, durable workflow in minutes.</p>
     </div>
-    <div class="ba-card after">
-      <div class="ba-tag">With Workflows</div>
-      <ul>
-        <li>Mark functions as tasks with the Render SDK</li>
-        <li>Render queues, provisions, and deprovisions instances</li>
-        <li>Built-in retries with configurable exponential backoff</li>
-        <li>Chain tasks with <code>Promise.all</code> / <code>asyncio.gather</code></li>
-        <li>Track every run in the Dashboard — status, duration, chain</li>
-        <li>Per-second billing — no compute cost when nothing's running</li>
-      </ul>
+    <div class="feat">
+      <h4>Automatic state &amp; retries</h4>
+      <p>Ensure exactly-once execution with automatic checkpointing and configurable retry policies (e.g., exponential backoff) built-in.</p>
+    </div>
+    <div class="feat">
+      <h4>Autoscaling from zero</h4>
+      <p>Workers scale automatically based on queue depth, from zero to hundreds of parallel tasks. Pay only for the vCPU-seconds you use.</p>
+    </div>
+    <div class="feat">
+      <h4>Unified observability &amp; replay</h4>
+      <p>Get a complete view of each workflow's execution — including logs, state, and a visual Gantt chart. Replay failed runs step-by-step with the original inputs for fast debugging.</p>
     </div>
   </div>
-
-  <p>In short: you write the <strong>logic</strong>, Render runs the <strong>infrastructure</strong>. No brokers, no workers, no polling loops.</p>
 
 
   <!-- ═══════════════════════════════════════ -->
