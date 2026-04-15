@@ -309,7 +309,8 @@
   <nav>
     <div class="nav-group">
       <div class="nav-label">Start here</div>
-      <a href="#top" class="on">What is Workflows</a>
+      <a href="#top" class="on">Overview</a>
+      <a href="#what">What is Workflows</a>
       <a href="#problem">The problem</a>
       <a href="#usecases">Use cases</a>
       <a href="#quickstart">Getting started</a>
@@ -368,6 +369,44 @@
   <h1>Long-running tasks, without the infrastructure</h1>
 
   <p class="lead">Render Workflows lets you break complex jobs into tasks that each run in their own instance — with queuing, retries, and orchestration handled for you. Define tasks as functions. Trigger them from anywhere. Chain them together. Pay per second.</p>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--  WHAT IS WORKFLOWS                      -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <h2 id="what">What is Workflows</h2>
+
+  <p>Render Workflows is a <strong>managed task orchestration platform</strong>. You define functions as tasks using the Render SDK, and Render handles everything else — provisioning compute, queuing runs, retrying failures, and cleaning up when work is done.</p>
+
+  <p>Without Workflows, running long-running or multi-step jobs means stitching together infrastructure that has nothing to do with your actual logic. Here's what that looks like:</p>
+
+  <div class="ba-grid">
+    <div class="ba-card before">
+      <div class="ba-tag">Without Workflows</div>
+      <ul>
+        <li>Provision and manage a message queue (Redis, SQS, RabbitMQ)</li>
+        <li>Write queue consumers, polling loops, and dead-letter handling</li>
+        <li>Implement your own retry logic with backoff</li>
+        <li>Build a worker pool and manage concurrency limits</li>
+        <li>Stitch together monitoring across multiple services</li>
+        <li>Pay for always-on worker instances, even when idle</li>
+      </ul>
+    </div>
+    <div class="ba-card after">
+      <div class="ba-tag">With Workflows</div>
+      <ul>
+        <li>Mark functions as tasks with the Render SDK</li>
+        <li>Render queues, provisions, and deprovisions instances</li>
+        <li>Built-in retries with configurable exponential backoff</li>
+        <li>Chain tasks with <code>Promise.all</code> / <code>asyncio.gather</code></li>
+        <li>Track every run in the Dashboard — status, duration, chain</li>
+        <li>Per-second billing — no compute cost when nothing's running</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>In short: you write the <strong>logic</strong>, Render runs the <strong>infrastructure</strong>. No brokers, no workers, no polling loops.</p>
 
 
   <!-- ═══════════════════════════════════════ -->
